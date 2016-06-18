@@ -1,0 +1,122 @@
+VimFindsMe
+----------
+
+__light-weight, "fuzzy", &path dependent file browser for Vim on *nix__
+
+and
+
+__a generic option editor -- best suited for comma separated options__
+
+and
+
+__a library for your own interactive scratch buffer solutions__
+
+TIP: If you like VimFindsMe and want to share the W00t!, I'm grateful for
+https://www.gittip.com/bairuidahu/[tips] or
+http://of-vim-and-vigor.blogspot.com/[beverages].
+
+:VFMEdit
+~~~~~~~~
+
+.Dependencies:
+
+* [optional] The system ++find++ command
+
+* [optional] https://github.com/dahu/Vimple[Vimple] (for the
+  https://github.com/dahu/Vimple[Vimple] Filter)
+
+++VFMEdit++ relies on your +path+ option. Setting this to a Good
+Value is crucial for getting the best out of VFM. Begin with this
+entry in your +~/.vimrc+ :
+
+  set path=.,**
+
+.Defaults
+====
+* Uses the Vim internal finder, +:help globpath()+ by default. To override this
+  with the system +find+ tool, enable the +vfm_use_system_find+ option.
++
+    let vfm_use_system_find = 0
+
+* Ignores version-control directories and Vim swap files:
++
+    let vfm_ignore = ['.hg', '.svn', '.bzr', '.git', 'CVS', '*.sw?']
++
+NOTE: The +vfm_ignore+ option is only valid when +vfm_use_system_find+
+      is enabled. When using the internal finder (default), the +:help
+      'wildignore'+ option is used instead.
+
+* Doesn't show bare directories in browse results:
++
+    let vfm_hide_dirs = 1
++
+NOTE: The +vfm_hide_dirs+ option is only valid when +vfm_use_system_find+
+      is enabled.
+
+* Maximum directory depth of 4:
++
+    let vfm_maxdepth = 4
++
+NOTE: The +vfm_maxdepth+ option is only valid when +vfm_use_system_find+
+      is enabled.
+
+* Skips your $HOME directory (if vfm_maxdepth is disabled):
++
+    let vfm_skip_home = 1
+
+* Uses the current buffer for the results browser:
++
+    let vfm_use_split = 0
+====
+
+The ++:VFMEdit++ command finds files within the paths in your &path
+option and displays the results in a scratch buffer. Initially you are
+prompted for a pattern to filter the results with. Press <enter> on a
+file in this browser buffer to open it in the current window. Press
+``q'' to quit the browser buffer without making a file selection.
+
+By default, ++VFMEdit++ uses `<leader>ge` to launch its browser.
+This can be overridden through the `<plug>vfm_browse_files` map.
+
+The file browser opens with the Vimple Filter (if vimple is installed,
+and if not, a search prompt). If your search term is too sparsely
+represented within the browse results, use the `<leader>cf` command to
+filter the buffer down to only those lines matching your search.
+
+:VFMArgs
+~~~~~~~~
+
+The ++VFMArgs++ command displays the current ++:args++. Pressing
+++<enter>++ in this window sets the args with the contents of the
+window as well as jumping to the file under the cursor. By default
+this functionality is also mapped to ++<leader>ga++ which can be
+overridden via ++<plug>vfm_browse_args++.
+
+:Args
+^^^^^
+
+The ++:Args++ command will set ++:args++ to the contents of the buffer.
+
+:Argadd
+^^^^^^^
+
+The ++:Argadd++ command will call ++:argadd++ with the contents of the buffer.
+
+:VFMCD
+~~~~~~
+
+The ++VFMCD++ command displays the set of directories you have
+edited in a scratch buffer. Pressing ++<enter>++ on one of the
+directories performs a ++:cd++ to that dir. This is handy when using
+the recommended ++&path++ setting for VimFindsMe (of ++.,**++).
+
+:VFMOpts
+~~~~~~~~
+
+The ++VFMOpts++ command displays the nominated option in a scratch
+buffer. Pressing enter sets the option to the lines in the buffer
+(with newlines replaced with comma). This is a handy way to edit long
+and messy comma separated options in vim, like: ++&path++,
+++&runtimepath++, ++&errorformat++
+
+See the documentation for more details.

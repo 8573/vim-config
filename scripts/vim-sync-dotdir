@@ -1,0 +1,47 @@
+#!/usr/bin/env zsh
+emulate zsh -u
+
+if [[ -z $1 ]] {
+	echo 'usage: vim-sync-dotdir <[username@]hostname>
+Synchronize local ‘~/.vim’ with the ‘~/.vim’ on the given host.'
+	exit 2
+}
+
+if [[ ! -e ~/.vim ]] {
+	echo 'error: local ‘~/.vim’ not found'
+	exit 3
+}
+if [[ ! -d ~/.vim ]] {
+	echo 'error: local ‘~/.vim’ is not a directory'
+	exit 4
+}
+
+local -a sync
+
+sync=(rsync ~/.vim "$1:"
+	--archive --hard-links --delete
+	--exclude=/.vim/{backups,undohist} --exclude='*.swp'
+)
+
+local choice='x'
+
+while [[ $choice == x ]]; do
+	$PAGER < <(<<<"****************************************
+THE FOLLOWING FILES WILL BE DELETED!
+Check that everything looks right!
+
+$($sync --verbose --dry-run | grep -E '^deleting ' | grep -Fv /.git/ | sed 's/^deleting //')")
+	read choice'?[Enter ‘Y’ (proceed), ‘n’ (cancel), or ‘x’ (look again)] '
+done
+
+case $choice in
+	(Y)
+		$sync && echo 'Synchronization complete.'
+		exit $?;;
+	(n)
+		echo 'Synchronization canceled.'
+		exit 5;;
+esac
+
+echo "Expected ‘Y’, ‘n’, or ‘x’; received ‘${(q)choice}’. Aborting."
+exit 6

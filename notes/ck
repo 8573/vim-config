@@ -1,0 +1,35 @@
+
+	My ^K	Vim ^K
+←	<-	<-	basic arrows
+↑	^|	-!
+→	->	->
+↓	|v	-v
+↔	<>	<>	bidirectional arrows
+↕	^v	UD
+↖	<^		diagonal arrows
+↗	^>
+↘	v>
+↙	<v
+↚	</		struck-through arrows
+↛	/>
+↜	<~		wavy arrows
+↝	~>
+↞			arrows with two heads
+↟
+↠
+↡
+↢			arrows with pointed tails (<-<, >->)
+↣
+↤			arrows with flat tails (<-|, |->)
+↥
+↦
+↧
+↨			up-down arrow with base
+↩			arrows with hooks
+↪
+↫			arrows with loops
+↬
+↭			left-right wavy arrow
+↮			left-right struck-through arrow
+↯			zigzag arrows
+↰

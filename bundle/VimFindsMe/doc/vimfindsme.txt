@@ -1,0 +1,198 @@
+*vimfindsme.txt*	a light-weight, "fuzzy", item browser, editor and actuator
+
+
+			VIM REFERENCE MANUAL	by Barry Arthur
+
+
+Help on using vimfindsme                          *VFM* *vfm* *vimfindsme*
+
+1. Introduction				|vimfindsme-intro|
+2. Commands				|vimfindsme-commands|
+3. Configuration			|vimfindsme-configuration|
+4. Fuzzy				|vimfindsme-fuzzy|
+
+==============================================================================
+ 1. INTRODUCTION                                        *vimfindsme-intro*
+
+VimFindsMe is a light-weight, "fuzzy", item browser, editor and actuator.
+
+VFM comes with several built-in commands but it is also extensible for
+user-defined item browsing and actuation.
+
+==============================================================================
+ 2. COMMANDS                                         *vimfindsme-commands*
+
+                                                                *VFMEdit*
+:VFMEdit~
+
+NOTE: VFMEdit depends on the system `find` command (and would therefore
+      probably not work on Windows)
+
+NOTE: VimFindsMe uses the Vimple Filter if you have
+      https://github.com/dahu/Vimple installed.
+
+VFMEdit relies on your |'path'| option. Setting this to a Good Value is
+crucial for getting the best out of VFM. Begin with this entry in your
+|$MYVIMRC|:
+>
+  set path=.,**
+<
+
+By default, VFMEdit ignores:
+* ".svn", ".git", ".hg" and "CVS" directories
+* Vim swap files (*.sw?)
+
+This can be customised through the |vfm_ignore| list option.
+
+Bare directory entries are not shown in the browser. This can be customised
+with the |vfm_hide_dirs| boolean option.
+
+Launch VFMEdit with:
+>
+  :VFMEdit
+<
+
+OR the key sequence <leader>ge . This default can be changed by mapping
+<plug>vfm_browse_files with an entry in your |$MYVIMRC| like:
+>
+  nmap <left> <plug>vfm_browse_files
+<
+
+VFMEdit will start with the Vimple Filter (if you have Vimple installed, or if
+not, a search prompt) so you can type to find the file you're after.
+
+If you don't have Vimple installed, you can filter the buffer with your prior
+search by doing:
+>
+  :v//d
+<
+or use the builtin map "cv" which does the same thing.
+
+                                                                 *VFMArgs*
+The VFMArgs command displays the current |:args|. Pressing |<enter>|
+in this window sets the args with the contents of the window as well
+as jumping to the file under the cursor. By default this functionality
+is also mapped to |<leader>ga| which can be overridden via
+|<plug>vfm_browse_args|.
+
+                                                                    *Args*
+The :Args command will set |:args| to the contents of the buffer.
+
+                                                                  *Argadd*
+The :Argadd command will call |:argadd| with the contents of the buffer.
+
+
+                                                                   *VFMCD*
+:VFMCD~
+
+The VFMCD command displays the set of directories you have edited in a
+scratch buffer. Pressing |<enter>| on one of the directories performs a |:cd|
+to that directory. This is handy when using the recommended VFM |&path|
+setting:
+>
+  set path=.,**
+<
+
+                                                                 *VFMOpts*
+:VFMOpts~
+
+The VFMOpts command displays the nominated |options| in a scratch
+buffer. Pressing enter sets the option to the lines in the buffer
+(with newlines replaced with comma). This is a handy way to edit long
+and messy comma separated options in vim, like: |'path'|,
+|'runtimepath'|, |'errorformat'|, etc.
+
+==============================================================================
+ 3. CONFIGURATION                               *vimfindsme-configuration*
+
+|'vfm_hide_dirs'|	Don't display bare directory names in the browser.
+|'vfm_use_system_find'|	Use the system `find` command.
+|'vfm_ignore'|		Names for `find` to ignore.
+|'vfm_maxdepth'|	`find` argument -maxdepth to limit recurse level.
+|'vfm_skip_home'|	Try not to find from $HOME.
+|'vfm_use_split'|	Use a split for the browser.
+
+------------------------------------------------------------------------------
+                                                         *'vfm_hide_dirs'*
+Values: boolean~
+Default: 1                                                                   ~
+
+Affects VFMEdit only.
+
+This option controls whether bare directory entries are shown in the browser
+results. By default, they are not.
+
+------------------------------------------------------------------------------
+                                                   *'vfm_use_system_find'*
+Values: boolean~
+Default: 0                                                                   ~
+
+Affects VFMEdit only.
+
+This option controls which tool is used to find files. By default, the
+internal Vim function |globpath()| is used. This is more portable across
+different architectures, but might be slower than your system `find` tool. To
+use the system `find` tool instead, enable this option.
+
+Note: When |'vfm_use_system_find'| is disabled (default), the 'wildignore'
+      options applies: Names matching one of the patterns in 'wildignore'
+      will be skipped. When |'vfm_use_system_find'| is enabled, the
+      |'vfm_ignore'| option is used instead.
+
+------------------------------------------------------------------------------
+                                                            *'vfm_ignore'*
+Values: list of glob expressions                ~
+Default: ['.hg', '.svn', '.bzr', '.git', 'CVS', '*.sw?']~
+
+Affects VFMEdit only. Affects system `find` tool only - |'vfm_use_system_find'|
+
+This is a set of globs used to match names to be ignored by the find command.
+
+------------------------------------------------------------------------------
+                                                          *'vfm_maxdepth'*
+Values: integer~
+Default: 4~
+
+Affects VFMEdit only.
+
+This is the maximum directory depth for `find` to descend into. Use a value
+of -1 to not limit depth (but be aware that you might have long delays.)
+
+------------------------------------------------------------------------------
+                                                         *'vfm_skip_home'*
+Values: boolean~
+Default: 1~
+
+Affects VFMEdit only.
+
+This option attempts to prevent VFM from searching within your $HOME
+directory. It only takes effect when g:vfm_maxdepth == -1 (i.e. disabled).
+
+------------------------------------------------------------------------------
+                                                         *'vfm_use_split'*
+Values: boolean~
+Default: 0~
+
+This option will create a new split for the browser instead of using the
+current buffer as the browser.
+
+==============================================================================
+ 4. FUZZY                                               *vimfindsme-fuzzy*
+
+The label on the box promised you "fuzzy" so here it is. The found
+items are opened in a new Vim buffer. You have ALL of Vim at your
+disposal now to search through this list and whittle it down to your
+desired item. VFM uses the Vimple Filter or a search to more quickly
+accomplish this.
+
+PRO TIP: After you've done your first search within the VFM buffer and
+the exact item you're looking for is not immediately visible, try:
+>
+    :v//d
+<
+to limit the list to only those matching your search.
+
+If that's not fuzzy enough for you, buy a hair-drier.
+
+Template From: https://github.com/dahu/Area-41/
+ vim:tw=78:ts=8:ft=help:norl:

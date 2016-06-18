@@ -1,0 +1,158 @@
+#!/usr/bin/env zsh
+emulate zsh
+
+this=${0##*/}
+cmds='help|install|install-nofsck|update|enable|disable|list|source|helptags'
+
+function vpmain {
+	if [[ $1 == $~cmds ]]; then
+		vp$1 $@
+	else
+		vphelp $@
+	fi
+}
+
+function vphelp {
+	if [[ $1 == help && -n $2 ]]; then
+		1=$2
+	fi
+
+	case $1 in
+		(install|install-nofsck)
+echo "usage: $this $1 <Git repo “URL”> [plugin dir]";;
+		(update)
+echo "usage: $this $1";;
+		(enable|disable)
+echo "usage: $this $1 <plugin name> [plugin dir] [disabled plugin dir]";;
+		(list)
+echo "usage: $this $1 <status> [pattern] [plugin dir] [disabled plugin dir]
+where <status> is: all|enabled|disabled";;
+		(source)
+echo "usage: $this $1 <plugin name> [plugin dir]";;
+		(helptags)
+echo "usage: $this $1 [Pathogen dir]";;
+		(*)
+echo "usage: $this <command>
+where <command> is: $cmds";;
+	esac
+	exit 2
+}
+
+function vpinstall {
+	[[ -z $2 ]] && vphelp $@
+
+	cd ${3:=~/.vim/bundle} || exit $?
+
+	if [[ -e ${d::=$3/${${2##*/}%.git}} ]]; then
+		echo "error: $d already exists"
+		exit 2
+	fi
+
+	git clone $2 &&\
+	cd $d &&\
+	git gc --aggressive &&\
+	{[[ -z $NO_FSCK ]] && git fsck --full --strict || true} &&\
+	vphelptags
+}
+function vpinstall-nofsck {
+	NO_FSCK=y vpinstall-main $@
+}
+
+function vpenable {
+	vpable $@
+}
+function vpdisable {
+	vpable $@
+}
+function vpable {
+	[[ -z $2 ]] && vphelp $@
+
+	if [[ $1 = disable ]]; then
+		src=${3:-~/.vim/bundle}/$2
+		dst=${4:-~/.vim/bundle-disabled}/$2
+	else
+		src=${4:-~/.vim/bundle-disabled}/$2
+		dst=${3:-~/.vim/bundle}/$2
+	fi
+
+	if [[ ! -e $src ]]; then
+		if [[ -e $dst ]]; then
+			echo "error: $2 already ${1}d"
+		else
+			echo "error: $2 not installed"
+		fi
+		return 2
+	fi
+	if [[ -e $dst ]]; then
+		echo "error: $dst already exists"
+		return 2
+	fi
+
+	mv $src $dst
+}
+
+function vpupdate {
+	[[ -n $2 ]] && vphelp $@
+
+	autoload -Uz colors && colors
+
+	for p in ${2:-~/.vim/bundle}/* ${3:-~/.vim/bundle-disabled}/*(N); do
+		if [[ -e $p/.git ]] && ! readlink $p; then
+			cd $p || exit $?
+
+			local head=$(git rev-parse HEAD)
+
+			echo -n "${fg_bold[blue]}[${p##*/}]$reset_color " && \
+			git pull --ff-only || exit $?
+
+			if [[ $(git rev-parse HEAD) != $head ]]; then
+				git gc --aggressive
+				git fsck --full --strict
+			fi
+		fi
+	done
+
+	vphelptags
+}
+
+function vplist {
+	[[ -n $6 ]] && vphelp $@
+
+	if [[ -n $3 ]]; then
+		3="-d -- $3"
+	fi
+
+	case $2 in
+		(all)
+			echo '-- Enabled:'
+			cd ${4:-~/.vim/bundle} && ls $~=3
+			echo
+			echo '-- Disabled:'
+			cd ${5:-~/.vim/bundle-disabled} && ls $~=3;;
+		(enabled)
+			cd ${4:-~/.vim/bundle} && ls $~=3;;
+		(disabled)
+			cd ${5:-~/.vim/bundle-disabled} && ls $~=3;;
+		(*)
+			vphelp $@;;
+	esac
+}
+
+function vpsource {
+	(( $# >= 2 && $# <= 3 )) || vphelp $@
+
+	cd ${3:-~/.vim/bundle}/$2 && git remote --verbose
+}
+
+function vphelptags {
+	[[ -n $3 ]] && vphelp $@
+
+	vim -n --noplugin -c q -u <(<<<"
+		scriptencoding utf-8
+		set nocompatible
+		source ${2:-~/.vim/vim-pathogen}/autoload/pathogen.vim
+		execute pathogen#infect()
+		Helptags")
+}
+
+vpmain $@

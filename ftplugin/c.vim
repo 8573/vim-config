@@ -1,0 +1,2 @@
+
+setlocal path+=/usr/include

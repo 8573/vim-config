@@ -1,0 +1,3 @@
+
+autocmd BufRead,BufNewFile ~/docs/article-urls/*
+	\  setlocal textwidth=72
