@@ -297,17 +297,35 @@ endfunction
 Assert StripDupElems([1,2,3,2,1]) == [1,2,3]
 Assert StripDupElems([3,2,1,1,2,3]) == [3,2,1]
 "}}}
-"{{{ NrToChar(n, utf8)
-function! NrToChar(n, utf8)
+"{{{ NrToChar(n[, only_want_UTF8])
+" `only_want_UTF8` is Boolean, defaulting to true.
+function! NrToChar(n, ...)
+	let l:only_want_UTF8 = a:0 ? a:1 : 1
+
 	if v:version >= 704
-		return nr2char(a:n, a:utf8)
-	else
-		return nr2char(a:n)
+		return nr2char(a:n, l:only_want_UTF8)
 	endif
+
+	if l:only_want_UTF8
+		if &encoding ==? 'utf-8' || &encoding ==? 'utf8'
+			return nr2char(a:n)
+		else
+			let l:old_enc = &encoding
+			let &encoding = 'utf-8'
+			let l:r = nr2char(a:n)
+			let &encoding = l:old_enc
+			return l:r
+		endif
+	endif
+
+	" Any encoding is acceptable.
+	return nr2char(a:n)
 endfunction
 
 Assert NrToChar(1, 1) ==# ''
+Assert NrToChar(1, 0) ==# ''
 Assert NrToChar(127, 1) ==# ''
+Assert NrToChar(127, 0) ==# ''
 "}}}
 "{{{ ShellEsc(string)
 " As shellescape(), but does not add backslashes before newlines.
