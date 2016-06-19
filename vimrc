@@ -7,8 +7,61 @@ set nocompatible
 augroup vimrc
 autocmd!
 
+"{{{ Functions needed this early
+"{{{ GetUID()
+function! GetUID()
+	let l:exes = [
+		\ '/usr/bin/id',
+		\ '/run/current-system/sw/bin/id',
+		\ ]
+
+	for l:exe in l:exes
+		if executable(l:exe)
+			return [str2nr(system(l:exe . ' -u'))]
+		endif
+	endfor
+
+	return []
+endfunction
+"}}}
+"}}}
+"{{{ Check whether we're running as superuser
+
+if GetUID() == [0]
+	echomsg 'NOTICE: running as superuser (UID 0) -- disabling plugins!'
+	let g:vimrc_SUPERUSER_MODE = 1
+	let g:vimrc_NO_PLUGINS = 1
+endif
+
+if GetUID() == []
+	echomsg 'NOTICE: possibly running as superuser (UID unknown) -- disabling plugins!'
+	let g:vimrc_SUPERUSER_MODE = 1
+	let g:vimrc_NO_PLUGINS = 1
+endif
+
+"}}}
+"{{{ Save important paths to variables
+
+let g:vimrc_HOME =
+	\ !exists('g:vimrc_SUPERUSER_MODE')
+	\	? fnamemodify('~/', ':p:s./$..')
+	\	: ( $USER ==# 'root'
+	\		? fnamemodify('~root/', ':p:s./$..')
+	\		: ( filereadable('/dev/null')
+	\			? '/dev/null'
+	\			: ''
+	\		)
+	\	)
+
+let g:vim_homedir = g:vimrc_HOME . '/.vim'
+
+" TODO: Check that `g:vim_homedir` is writable only for owner.
+
+"}}}
 "}}}
 "{{{ Plug-in loading
+
+if !exists('g:vimrc_NO_PLUGINS')
 
 call plug#begin('~/.vim/plugged')
 
@@ -49,6 +102,8 @@ Plug 'racer-rust/vim-racer', {'for': 'rust'}
 
 call plug#end()
 
+endif
+
 "}}}
 "{{{ Settings
 "{{{ General settings
@@ -57,7 +112,7 @@ set noautowrite
 set background=dark
 set backup
 set backupcopy=yes
-set backupdir=~/.vim/backups
+let &backupdir = g:vim_homedir . '/backups'
 set nobomb
 if exists('+breakindent')
 	set breakindent
@@ -128,7 +183,7 @@ set suffixes+=~,.bak,.swp,.blg,brf,.cb,.ind,.idx,.ilg,.inx,.toc
 " [2014-09-03 13:49 -0700] Note from the future: I’ve barely ever, or maybe
 " never, used those mappings….
 if exists('+undodir') && exists('+undofile')
-	set undodir=~/.vim/undohist
+	let &undodir = g:vim_homedir . '/undohist'
 	set undofile
 endif
 set viminfo+=h
