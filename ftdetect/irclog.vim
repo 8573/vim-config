@@ -11,4 +11,8 @@ autocmd BufRead,BufNewFile */*log*quassel*,*/*quassel*log*
 " formats are similar but WeeChat’s is more flexible, and thus my syntax
 " definition for it is more general.
 autocmd BufRead,BufNewFile */*log*irc*,*/*irc*log*
-	\ setfiletype weechatlog
+	\  if &l:filetype ==# ''
+	\|   echomsg
+	\      'Using `filetype=weechatlog` for indeterminately-typed file' @%
+	\|   setfiletype weechatlog
+	\| endif
