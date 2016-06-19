@@ -58,6 +58,22 @@ let g:vim_homedir = g:vimrc_HOME . '/.vim'
 " TODO: Check that `g:vim_homedir` is writable only for owner.
 
 "}}}
+"{{{ Load misc. other configuration scripts
+
+let s:rc = [
+	\ 'lib/digraphs.vim',
+	\ ]
+
+for s:f in s:rc
+	let s:f = g:vim_homedir . '/' . s:f
+	if filereadable(s:f)
+		execute 'source' s:f
+	endif
+endfor
+
+unlet s:rc s:f
+
+"}}}
 "}}}
 "{{{ Plug-in loading
 
