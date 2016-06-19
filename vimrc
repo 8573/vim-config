@@ -822,6 +822,39 @@ call RegisterFileType('GIT_HUB_EDIT_MSG', 'gitcommit')
 
 "}}}
 "{{{ Epilog
+"{{{ Create state directories
+
+"{{{ s:mkdir(dir)
+function! s:mkdir(dir)
+	let l:dir = fnamemodify(a:dir, ":p")
+
+	let l:display_dir = fnamemodify(l:dir, ":~")
+
+	if isdirectory(l:dir)
+		return
+	endif
+
+	let l:parent_dir = fnamemodify(l:dir, ":h")
+	if filewritable(l:parent_dir) != 2
+		echomsg 'Cannot create directory `' . l:display_dir .
+			'`, because parent directory is not writable or does not exist.'
+		return
+	endif
+
+	if !exists("*mkdir")
+		echomsg 'Cannot create directory `' . l:display_dir .
+			'`, because `mkdir` function is not available.'
+		return
+	endif
+
+	call mkdir(l:dir, "", 0700)
+endfunction
+"}}}
+
+call s:mkdir(&g:backupdir)
+call s:mkdir(&g:undodir)
+
+"}}}
 
 augroup END
 
