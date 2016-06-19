@@ -702,6 +702,27 @@ function! Qalc(expr)
 endfunction
 "}}}
 "}}}
+"{{{ Mappings and commands
+"{{{ Spell files
+
+command! UpdateSpellfile call UpdateSpellfile()
+
+function! UpdateSpellfile()
+	let l:spelldir = g:vim_homedir . '/spell'
+	let l:langenc = g:vim_main_spelllang . '.' . &l:encoding
+	let l:wordfile_main = l:spelldir . '/' . l:langenc . '.add'
+	let l:wordfile_misc = matchstr(split(&l:spellfile, ','), "xx@etc")
+	" `-t` is deprecated by GNU, but `--tmpdir` is invalid for BSD
+	" `mktemp`.
+	let l:wordfile_both = system('mktemp -t vim-spell-add.XXXXXXXXXX')
+	let l:spellfile = l:spelldir . '/' . l:langenc . '.add.spl'
+
+	execute '!cat' l:wordfile_main l:wordfile_misc '>' l:wordfile_both
+	execute 'mkspell!' l:spellfile l:wordfile_both
+endfunction
+
+"}}}
+"}}}
 "{{{ Plug-in configuration
 "{{{ Airline
 
