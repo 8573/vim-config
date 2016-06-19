@@ -854,7 +854,7 @@ inoremap <silent> <C-C> <C-\><C-N>:call RecolorLineNrsForMode(0)<CR>
 "}}}
 "{{{ Highlights
 
-function s:SetHighlights()
+function! s:SetHighlights()
 
 let s:linenr_color = synIDattr(hlID('LineNr'), 'fg')
 
@@ -884,6 +884,10 @@ if &t_Co == 256
 endif
 
 call RecolorLineNrsForMode(0)
+
+if exists(':AirlineRefresh') == 2
+	AirlineRefresh
+endif
 
 endfunction
 
