@@ -4,10 +4,47 @@ scriptencoding utf-8
 
 set nocompatible
 
-if !exists('g:vimrc_settings_only')
+if $USER ==? 'root' || ($UID != '' && $UID == 0)
+		\ || system('/usr/bin/id -u') == 0
+		\ || system('/bin/echo $UID') == 0
+	echomsg 'NOTICE: running as root (UID 0) -- disabling plugins!'
+	let g:vimrc_SUPERUSER_MODE = 1
+	let g:vimrc_NO_PLUGINS = 1
+endif
+
+let g:vimrc_HOME =
+	\ !exists('g:vimrc_SUPERUSER_MODE')
+	\	? fnamemodify('~/', ':p:s./$..')
+	\	: ( $USER ==# 'root'
+	\		? fnamemodify('~root/', ':p:s./$..')
+	\		: ( filereadable('/dev/null')
+	\			? '/dev/null'
+	\			: ''
+	\		)
+	\	)
+
+let g:vim_homedir = g:vimrc_HOME . '/.vim'
+
+" TODO: Check that `g:vim_homedir` is writable only for owner.
+
+if exists('g:vimrc_settings_only')
+	let g:vimrc_NO_PLUGINS = 1
+endif
 
 augroup vimrc
 autocmd!
+
+command! -narg=1 LocalSource call s:LocalSource(<q-args>)
+function! s:LocalSource(f)
+	let l:f = g:vim_homedir . '/' . a:f
+	execute 'source' l:f
+endfunction
+function! s:LocalSourceIfExists(f)
+	let l:f = g:vim_homedir . '/' . a:f
+	if filereadable(l:f)
+		execute 'source' l:f
+	endif
+endfunction
 
 if !exists('g:vimrc_NO_PLUGINS')
 	runtime rc/gentoo-vimrc.vim
@@ -15,14 +52,12 @@ if !exists('g:vimrc_NO_PLUGINS')
 	runtime rc/digraphs.vim
 
 	" Directory wherein plugins are stored.
-	let s:plugin_dir = fnamemodify('~/.vim/bundle', ':p')
+	let s:plugin_dir = g:vim_homedir . '/bundle'
 
 	execute pathogen#infect(s:plugin_dir . '/{}')
 else
-	source ~/.vim/vim-sensible/plugin/sensible.vim
-	source ~/.vim/rc/digraphs.vim
-endif
-
+	call s:LocalSourceIfExists('vim-sensible/plugin/sensible.vim')
+	call s:LocalSourceIfExists('rc/digraphs.vim')
 endif
 
 "}}}======== Prolog of Miscellaneous Initialization =================/
@@ -43,7 +78,7 @@ set noautowrite
 set background=dark
 set backup
 set backupcopy=yes
-set backupdir=~/.vim/backups
+let &backupdir = g:vim_homedir . '/backups'
 " No Byte Order Mark.
 set nobomb
 if exists('+breakindent')
@@ -55,6 +90,8 @@ set colorcolumn=+2
 set completeopt=menuone,preview
 set cryptmethod=blowfish
 set cursorline
+" TODO: Check that these directories are not world-readable.
+set directory=.,~/private/tmp/vim-swap,~/private/tmp,~/internal/tmp/vim-swap,~/internal/tmp,~/tmp,/var/tmp,/tmp
 set encoding=utf-8
 set fileencodings=utf-8,default
 set foldmethod=marker
@@ -116,7 +153,7 @@ set suffixes+=~,.bak,.swp,.blg,brf,.cb,.ind,.idx,.ilg,.inx,.toc
 " [2014-09-03 13:49 -0700] Note from the future: I’ve barely ever, or maybe
 " never, used those mappings….
 if exists('+undodir') && exists('+undofile')
-	set undodir=~/.vim/undohist
+	let &undodir = g:vim_homedir . '/undohist'
 	set undofile
 endif
 set viminfo+=h
@@ -124,6 +161,8 @@ set wildmode=longest:full
 set wrapscan
 
 setglobal fileencoding=utf-8
+
+let g:vim_main_spelllang = 'en'
 
 if exists('g:vimrc_settings_only')
 	finish
@@ -175,8 +214,8 @@ function! ApplyMessageSettings()
 		setlocal shiftwidth=4
 	endif
 	setlocal spell
-	if !&textwidth
-		setlocal textwidth=72
+	if &textwidth > 70
+		setlocal textwidth=70
 	endif
 endfunction
 "}}}
@@ -315,8 +354,45 @@ call LoadFileClasses()
 
 "{{{======== Miscellaneous Variables ================================\
 
-let g:unit_prefixes = split('yotta zetta exa peta tera giga mega kilo hecto deca deci centi milli micro nano pico femto atto zepto yocto', ' ')
-let g:units_of_measure = split('metre meter gram second ampere kelvin mole candela radian steradian hertz newton pascal joule watt coulomb volt farad ohm siemens weber tesla henry degree lumen lux becquerel gray sievert katal byte bit octet trit nibble semioctet quartet seminibble', ' ')
+let g:unit_prefixes_SI_large = split('deca hecto kilo mega giga tera peta exa zetta yotta', ' ')
+let g:unit_prefixes_SI_small = split('deci centi milli micro nano pico femto atto zepto yocto', ' ')
+let g:unit_prefixes_binary_large = split('kibi mebi gibi tebi pebi exbi zebi yobi', ' ')
+let g:unit_prefixes =
+	\   g:unit_prefixes_SI_large
+	\ + g:unit_prefixes_SI_small
+	\ + g:unit_prefixes_binary_large
+
+" Of course, the kilogram is the SI base unit of mass, not the gram, but using
+" kilogram rather than gram here would make combining these “base units” with
+" the above prefixes rather more of a bother.
+let g:units_of_measure_SI_base = split('metre meter gram second ampere kelvin mole candela', ' ')
+" Wikipedia considers the degree Celsius a SI dervied unit, but I’ve not
+" included it here. (I guess because it includes a space, and I don’t want to
+" bother refactoring this space-splitting stuff.)
+let g:units_of_measure_SI_derived = split('radian steradian hertz newton pascal joule watt coulomb volt farad ohm siemens weber tesla henry lumen lux becquerel gray sievert katal', ' ')
+let g:units_of_measure_SI =
+	\   g:units_of_measure_SI_base
+	\ + g:units_of_measure_SI_derived
+let g:units_of_measure_data = split('byte bit octet trit nibble semioctet quartet seminibble', ' ')
+let g:units_of_measure =
+	\   g:units_of_measure_SI
+	\ + g:units_of_measure_data
+
+let g:unit_prefix_symbols_SI_large = split('da h k M G T P E Z Y', ' ')
+let g:unit_prefix_symbols_SI_small = split('d c m µ n p f a z y', ' ')
+let g:unit_prefix_symbols_binary_large = split('Ki Mi Gi Ti Pi Ei Zi Yi', ' ')
+let g:unit_prefix_symbols =
+	\   g:unit_prefix_symbols_SI_large
+	\ + g:unit_prefix_symbols_SI_small
+	\ + g:unit_prefix_symbols_binary_large
+
+let g:unit_of_measure_symbols_SI_base = split('m g s A K mol cd', ' ')
+let g:unit_of_measure_symbols_SI_derived = split('rad sr Hz N Pa J W C V F Ω S Wb T H lm lx Bq Gy Sv kat', ' ')
+let g:unit_of_measure_symbols_data = split('B b o', ' ')
+let g:unit_of_measure_symbols =
+	\   g:unit_of_measure_symbols_SI_base
+	\ + g:unit_of_measure_symbols_SI_derived
+	\ + g:unit_of_measure_symbols_data
 
 "}}}======== Miscellaneous Variables ================================/
 
@@ -360,19 +436,19 @@ function! NCmp(x, y)
 	return +a:x < +a:y ? -1 : +a:x > +a:y
 endfunction
 
-Assert NCmp(0, 0) == 0
-Assert NCmp(1, 0) == 1
-Assert NCmp(0, 1) == -1
-Assert NCmp(100, 100) == 0
-Assert NCmp(100, -100) == 1
-Assert NCmp(-100, 100) == -1
-Assert NCmp('0', '0') == 0
-Assert NCmp('1', '0') == 1
-Assert NCmp('0', '1') == -1
-Assert NCmp('100', '100') == 0
+Assert NCmp(0, 0)          == 0
+Assert NCmp(1, 0)          == 1
+Assert NCmp(0, 1)          == -1
+Assert NCmp(100, 100)      == 0
+Assert NCmp(100, -100)     == 1
+Assert NCmp(-100, 100)     == -1
+Assert NCmp('0', '0')      == 0
+Assert NCmp('1', '0')      == 1
+Assert NCmp('0', '1')      == -1
+Assert NCmp('100', '100')  == 0
 Assert NCmp('100', '-100') == 1
 Assert NCmp('-100', '100') == -1
-Assert NCmp('x', 'y') == 0
+Assert NCmp('x', 'y')      == 0
 "}}}
 "{{{ NSort(list)
 " Sorts `list` (in-place), sorting the elements as numbers rather than
@@ -381,7 +457,7 @@ function! NSort(list)
 	return sort(a:list, 'NCmp')
 endfunction
 
-Assert NSort([1, 2, 3]) == [1, 2, 3]
+Assert NSort([1, 2, 3])     == [1, 2, 3]
 Assert NSort([10, 111, 12]) == [10, 12, 111]
 "}}}
 "{{{ IsInList(list, x)
@@ -406,20 +482,38 @@ function! StripDupElems(list)
 	return l:r
 endfunction
 
-Assert StripDupElems([1,2,3,2,1]) == [1,2,3]
+Assert StripDupElems([1,2,3,2,1])   == [1,2,3]
 Assert StripDupElems([3,2,1,1,2,3]) == [3,2,1]
 "}}}
-"{{{ NrToChar(n, utf8)
-function! NrToChar(n, utf8)
+"{{{ NrToChar(n[, only_want_UTF8])
+" `only_want_UTF8` is Boolean, defaulting to true.
+function! NrToChar(n, ...)
+	let l:only_want_UTF8 = a:0 ? a:1 : 1
+
 	if v:version >= 704
-		return nr2char(a:n, a:utf8)
-	else
-		return nr2char(a:n)
+		return nr2char(a:n, l:only_want_UTF8)
 	endif
+
+	if l:only_want_UTF8
+		if &encoding ==? 'utf-8' || &encoding ==? 'utf8'
+			return nr2char(a:n)
+		else
+			let l:old_enc = &encoding
+			let &encoding = 'utf-8'
+			let l:r = nr2char(a:n)
+			let &encoding = l:old_enc
+			return l:r
+		endif
+	endif
+
+	" Any encoding is acceptable.
+	return nr2char(a:n)
 endfunction
 
-Assert NrToChar(1, 1) ==# ''
+Assert NrToChar(1,   1) ==# ''
+Assert NrToChar(1,   0) ==# ''
 Assert NrToChar(127, 1) ==# ''
+Assert NrToChar(127, 0) ==# ''
 "}}}
 "{{{ ShellEsc(string)
 " As shellescape(), but does not add backslashes before newlines.
@@ -474,11 +568,11 @@ function! FindUnusedChar(string)
 	return NrToChar(l:c, 1)
 endfunction
 
-Assert FindUnusedChar('') ==# ''
-Assert FindUnusedChar('a') ==# ''
-Assert FindUnusedChar('') ==# ''
-Assert FindUnusedChar('') ==# ''
-Assert FindUnusedChar('') ==# ''
+Assert FindUnusedChar('')       ==# ''
+Assert FindUnusedChar('a')      ==# ''
+Assert FindUnusedChar('')     ==# ''
+Assert FindUnusedChar('')     ==# ''
+Assert FindUnusedChar('')   ==# ''
 Assert FindUnusedChar('') ==# ''
 "}}}
 "{{{ SSSplit(string[, noword])
@@ -498,9 +592,9 @@ function! SSSplit(string, ...)
 	return split(a:string[1:], '\V' . a:string[0], 1)
 endfunction
 
-Assert SSSplit('') ==# ['']
-Assert SSSplit(' ') ==# ['']
-Assert SSSplit('/a/b') ==# ['a', 'b']
+Assert SSSplit('')        ==# ['']
+Assert SSSplit(' ')       ==# ['']
+Assert SSSplit('/a/b')    ==# ['a', 'b']
 Assert SSSplit(' x y z ') ==# ['x', 'y', 'z', '']
 "}}}
 "{{{ WrapSubLists(list, n)
@@ -567,7 +661,8 @@ function! SwapStrings(string, swapList)
 	return l:s
 endfunction
 
-Assert SwapStrings('abcdefabc', ['a', 'b', 'def', 'x', 'x', 'y']) ==# 'bacxbac'
+Assert SwapStrings('abcdefabc', ['a', 'b', 'def', 'x', 'x', 'y'])
+	\ ==# 'bacxbac'
 Assert SwapStrings('abc "foo ''bar'' foo" abc', SSSplit(' '' "'))
 	\ ==# 'abc ''foo "bar" foo'' abc'
 "}}}
@@ -580,9 +675,9 @@ function! SIPrefix(n)
 	return [a:n / pow(1000, l:m), 'kMGTPEZY'[l:m-1]]
 endfunction
 
-Assert SIPrefix(16) == [16.0, '']
-Assert SIPrefix(1024) == [1.024, 'k']
-Assert SIPrefix(1048576) == [1.048576, 'M']
+Assert SIPrefix(16)      ==# [16.0, '']
+Assert SIPrefix(1024)    ==# [1.024, 'k']
+Assert SIPrefix(1048576) ==# [1.048576, 'M']
 "}}}
 "{{{ BinaryPrefix(n)
 function! BinaryPrefix(n)
@@ -593,7 +688,7 @@ function! BinaryPrefix(n)
 	return [a:n / pow(1024, l:m), 'KMGTPEZY'[l:m-1] . (l:m ? 'i' : '')]
 endfunction
 
-Assert BinaryPrefix(10) ==# [10.0, '']
+Assert BinaryPrefix(10)    ==# [10.0, '']
 Assert BinaryPrefix(10000) ==# [9.765625, 'Ki']
 Assert BinaryPrefix(1.0e7) ==# [1.0e7/1048576, 'Mi']
 "}}}
@@ -682,18 +777,18 @@ function! DoubleBackslashes(string)
 	return escape(a:string, '\')
 endfunction
 
-Assert DoubleBackslashes('') == ''
-Assert DoubleBackslashes('abc') == 'abc'
-Assert DoubleBackslashes('a\\z') == 'a\\\\z'
+Assert DoubleBackslashes('')     ==# ''
+Assert DoubleBackslashes('abc')  ==# 'abc'
+Assert DoubleBackslashes('a\\z') ==# 'a\\\\z'
 "}}}
 "{{{ VerbatimPattern(string)
 function! VerbatimPattern(string)
 	return '\V' . DoubleBackslashes(a:string)
 endfunction
 
-Assert VerbatimPattern('') == '\V'
-Assert VerbatimPattern('abc') == '\Vabc'
-Assert VerbatimPattern('^\a\_$') == '\V^\\a\\_$'
+Assert VerbatimPattern('')       ==# '\V'
+Assert VerbatimPattern('abc')    ==# '\Vabc'
+Assert VerbatimPattern('^\a\_$') ==# '\V^\\a\\_$'
 "}}}
 "{{{ VPut(x)
 function! VPut(x)
@@ -733,11 +828,11 @@ function! Matches(string, pattern)
 	return l:r
 endfunction
 
-Assert Matches('', '.*') == ['']
-Assert Matches('abc', 'x') == []
-Assert Matches('abc', '.') == ['a', 'b', 'c']
-Assert Matches('abc foo xyz', '\<\a\+\>') == ['abc', 'foo', 'xyz']
-Assert Matches('(abc) (foo) (xyz)', '(\zs\a\+\ze)') == ['abc', 'foo', 'xyz']
+Assert Matches('', '.*')                            ==# ['']
+Assert Matches('abc', 'x')                          ==# []
+Assert Matches('abc', '.')                          ==# ['a', 'b', 'c']
+Assert Matches('abc foo xyz', '\<\a\+\>')           ==# ['abc', 'foo', 'xyz']
+Assert Matches('(abc) (foo) (xyz)', '(\zs\a\+\ze)') ==# ['abc', 'foo', 'xyz']
 "}}}
 "{{{ MatchesSansEmpties(string, pattern)
 " Returns a list of all matches of `pattern` in `string`, sans matches that
@@ -1198,6 +1293,9 @@ call DfnInsertMacro('\Em', "'[…]'")
 "{{{ `<Leader>xs` — Exchange Strings
 vnoremap <silent> <Leader>xs :VPut SwapStrings(GetSelection(), SSSplit(PromptLine('Pairs of strings to swap (first char is sep, like `:s`):')))<CR>
 "}}}
+"{{{ `<Leader>rr` — Redact (replace with black boxes)
+noremap <Leader>rr r█
+"}}}
 "{{{ `<Leader>!c`, `{Visual}<Leader>!c` — Calculate
 noremap <Leader>!c :Qalc<Space>
 
@@ -1344,8 +1442,8 @@ command! -nargs=? FileSize echo FmtFileSize(<q-args> != '' ? <q-args> : @%)
 " Go to Shell
 noremap <silent> <Leader>gs :shell<CR>
 
-command! -bar RCLoad source ~/.vim/vimrc | normal <C-L>
-command! -bar RCEdit tabedit ~/.vim/vimrc
+command! -bar RCLoad call s:LocalSource('vimrc') | normal <C-L>
+command! -bar RCEdit execute 'tabedit' g:vim_homedir.'/vimrc'
 "}}}
 "{{{ Web access
 
@@ -1416,6 +1514,26 @@ noremap <silent> <Leader>sWBe :UseElinksForWeb<CR>
 noremap <silent> <Leader>sWBw :UseW3mForWeb<CR>
 
 "}}}
+"{{{ Spell files
+
+command! UpdateSpellfile call UpdateSpellfile()
+
+function! UpdateSpellfile()
+	let [l:spelldir, l:lang, l:enc] =
+		\ [g:vim_homedir.'/spell', g:vim_main_spelllang, &l:encoding]
+	let l:langenc = l:lang . '.' . l:enc
+	let l:wordfile_main = l:spelldir . '/' . l:langenc . '.add'
+	let l:wordfile_misc = &l:spellfile
+	" `-t` is deprecated by GNU, but `--tmpdir` is invalid for BSD
+	" `mktemp`.
+	let l:wordfile_both = system('mktemp -t vim-spell-add.XXXXXXXXXX')
+	let l:spellfile = l:spelldir . '/' . l:langenc . '.add.spl'
+
+	execute '!cat' l:wordfile_main l:wordfile_misc '>' l:wordfile_both
+	execute 'mkspell!' l:spellfile l:wordfile_both
+endfunction
+
+"}}}
 "{{{ Tests
 command! -bar ColorTest tab runtime syntax/colortest.vim
 
@@ -1437,7 +1555,7 @@ function! TryToCompleteIncompleteFileName()
 		\ 'v:val !~ ''\.swp$'' && stridx(v:val, "\n") == -1')
 	if !empty(l:choices) && len(l:choices) <= 9
 		let l:choice = confirm(
-			\ 'File not found. Did you mean one of these? (Press Enter or ^C to skip.)',
+			\ 'File not found. Did you mean one of these? (Press Enter to skip.)',
 			\ join(map(copy(l:choices), '"&".v:key." ".v:val'),
 			\ "\n"), 0)
 		if l:choice
@@ -1449,8 +1567,10 @@ function! TryToCompleteIncompleteFileName()
 	endif
 endfunction
 
-autocmd BufRead,BufNewFile *
-	\ let &l:spellfile = $HOME.'/.vim/spell/'.&spelllang.'.utf-8.add'
+autocmd BufRead,BufNewFile * let &l:spellfile = join(map(
+	\ ['xx@etc', g:vim_main_spelllang],
+	\ 'g:vim_homedir . "/spell/" . v:val . "." . &l:encoding . ".add"'),
+	\ ',')
 
 "}}}======== Auto-Commands ==========================================/
 
@@ -1520,7 +1640,7 @@ inoremap <silent> <C-C> <C-\><C-N>:call RecolorLineNrsForMode(0)<CR>
 
 "{{{ Highlights
 
-function s:SetHighlights()
+function! s:SetHighlights()
 
 let s:linenr_color = synIDattr(hlID('LineNr'), 'fg')
 if s:linenr_color =~ '\v^(3|11)$'
@@ -1560,6 +1680,10 @@ endif
 
 call RecolorLineNrsForMode(0)
 
+if exists(':AirlineRefresh') == 2
+	AirlineRefresh
+endif
+
 endfunction
 
 autocmd ColorScheme * call s:SetHighlights()
@@ -1580,9 +1704,11 @@ endfunction
 autocmd VimEnter ?\\\{0\} setfiletype none
 
 call RegisterFileType('*.mkd', 'markdown-simple')
+call RegisterFileType('*.mail', 'mail')
 call RegisterFileType('*.ll', 'llvm')
 call RegisterFileType('*.td', 'tablegen')
 call RegisterFileType('*.jx', 'xhtml')
+call RegisterFileType('*/el-get/*.rcp', 'lisp')
 
 autocmd BufRead https\\\{,1\}://* HideBadWhitespace
 
@@ -1623,6 +1749,27 @@ let g:bufferline_echo = 0
 let g:bufferline_fname_mod = ':~:.:gs \(/[^[:alpha:]]*[[:alpha:]]\)[^/]*/ \1/'
 
 "}}} Bufferline
+"{{{ CtrlP
+
+" Default to searching by regexp for prefixes.
+let g:ctrlp_regexp = 1
+let g:ctrlp_default_input = '^'
+
+" Use version-control systems to generate file lists, when searching in a
+" version-control repository.
+"
+" (Git and Mercurial entries copied from CtrlP documentation.)
+let g:ctrlp_user_command = {
+\	'types': {
+\		1: ['.git', 'cd %s && git ls-files'],
+\		2: ['.hg', 'hg --cwd %s locate -I .'],
+\	}
+\ }
+
+noremap <silent> <C-J> :CtrlPBuffer<CR>
+noremap <silent> <C-N> :CtrlPMixed<CR>
+
+"}}}
 "{{{ delimitMate
 
 let g:delimitMate_expand_cr = 1
@@ -1808,6 +1955,19 @@ noremap <silent> [F :call SwitchFileHard('[')<CR>
 noremap <silent> ]F :call SwitchFileHard(']')<CR>
 
 "}}}
+"{{{ Unite
+
+" Unite fills it buffers with trailing whitespace; don’t highlight that
+" whitespace as erroneous.
+"
+" FIXME: This doesn’t seem to work.
+autocmd FileType unite
+	\  if exists(':HideBadWhitespace') == 2
+	\|	execute 'HideBadWhitespace'
+	\| endif
+	" HideBadWhitespace is wrapped in execute because it eats bars.
+
+"}}}
 "{{{ vim2hs
 
 let g:haskell_conceal = 0
@@ -1830,6 +1990,10 @@ silent! normal 
 
 augroup END
 
+" <https://stackoverflow.com/a/3164830>
+set noexrc
 set secure
+
+call s:LocalSourceIfExists('vimrc.local')
 
 "}}}======== Epilog of Miscellaneous Finalization ===================/
