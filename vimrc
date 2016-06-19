@@ -782,6 +782,7 @@ function! UpdateSpellfile()
 
 	execute '!cat' l:wordfile_main l:wordfile_misc '>' l:wordfile_both
 	execute 'mkspell!' l:spellfile l:wordfile_both
+	call delete(l:wordfile_both)
 endfunction
 
 "}}}
