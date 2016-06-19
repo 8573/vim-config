@@ -54,7 +54,7 @@ function! HighlightIrcNick(
 	let l:c = 0
 	while IsInList(s:badColors, l:c)
 		let l:c = abs(str2nr(SHA256(l:nick), 16) % s:m)
-		let l:nick .= NrToChar(1 + (l:c % 126))
+		let l:nick .= NrToChar(1 + (l:c % 126), 1)
 	endwhile
 	if s:HighlightNicksEverywhere
 		execute 'syntax match IrcLogNickMention'.l:hash
@@ -98,3 +98,6 @@ let b:ircChanPat = '\v%([#+&]|!%(\u|\d){5})[^ ,:\n\r\x00\x07]{,49}%(:[^ ,:\n\r\x
 setlocal autoread
 " Refresh
 noremap <buffer> <Leader>r :checktime<CR>
+if exists(':HideBadWhitespace') == 2
+	HideBadWhitespace
+endif
