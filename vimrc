@@ -192,6 +192,8 @@ set wrapscan
 
 setglobal fileencoding=utf-8
 
+let g:vim_main_spelllang = 'en'
+
 "}}}
 "{{{ GUI settings
 
@@ -764,8 +766,10 @@ function! TryToCompleteIncompleteFileName()
 endfunction
 
 autocmd BufRead,BufNewFile *
-	\ let &l:spellfile =
-	\     $HOME . '/.vim/spell/' . &spelllang . '.utf-8.add'
+	\ let &l:spellfile = join(map(
+	\   ['xx@etc', g:vim_main_spelllang],
+	\   'g:vim_homedir . "/spell/" . v:val . "." . &l:encoding . ".add"'),
+	\   ',')
 
 "}}}
 "{{{ Display customization
