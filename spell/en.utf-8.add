@@ -61,9 +61,11 @@ Betts-LaCroix
 Brinker
 Brunton
 CBSA
+CDDL
 CTO
 CVE
 CXXFLAGS
+CarPlay
 Cipro
 Clif bar
 Clif bars
@@ -76,10 +78,12 @@ DITP
 DS9
 DSA
 DSM
+DTrace
 Dafny
 Darcs
 Debian
 DigiCert
+DragonFly BSD
 Dropbox
 Dąbrowski
 EFF
@@ -88,8 +92,12 @@ FP
 FPGA
 Facebook
 Fiskerstrand
+FreeBSD
 GCC
 GLEP
+GPL
+GPLv2
+GPLv3
 GPS
 Gandi
 Gentoo
@@ -147,7 +155,9 @@ Mousera
 NEMA
 NSA
 NX
+NetBSD
 Netflix
+NixOS
 NixOS
 OCBAN
 OCaml
@@ -156,8 +166,12 @@ Obama
 Occitan
 Octodex
 Ok Google
+OmniOS
+OpenBSD
+OpenIndiana
 OpenPGP
 OpenSSL
+OpenSolaris
 Openwall
 P2P
 PGP
@@ -195,8 +209,11 @@ SQLite
 SVN
 Sabayon
 Segerstrom
+SmartOS
+Solaris
 StartCom
 StartSSL
+SunOS
 Sylvain
 TNG
 TPD
@@ -216,6 +233,7 @@ URLs
 UTC
 UTF
 Ubuntu
+VPS
 VisionLink
 WHATWG
 WML
@@ -1284,6 +1302,7 @@ hyperlinks
 iOS
 iPad
 iPhone
+illumos
 inbox
 incl.
 inducingly
@@ -1505,6 +1524,7 @@ lux
 lycanthrope
 lycanthropic
 lycanthropy
+macOS
 malloc
 mathily
 mathy
@@ -2606,6 +2626,7 @@ trits
 troublingly
 trustedness
 truthy
+tvOS
 tweens
 un
 undead
@@ -2652,6 +2673,7 @@ wargamers
 wargames
 wargaming
 wasn’t
+watchOS
 watt
 webcomic
 webcomics
