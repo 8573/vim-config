@@ -940,8 +940,16 @@ call s:mkdir(&g:undodir)
 
 "}}}
 
+" Delete single-# comments in spell files older than a day when exiting Vim.
+" Double-# comments are untouched, and can be used for actual comments (rather
+" than commenting out words, including with ‘zw’).
+autocmd VimLeavePre * runtime spell/cleanadd.vim
+let g:spell_clean_limit = 60 * 60 * 24
+
 augroup END
 
+" <https://stackoverflow.com/a/3164830>
+set noexrc
 set secure
 
 "}}}
