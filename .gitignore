@@ -2,4 +2,5 @@
 /plugged
 /undohist
 /spell/*.spl
+/spell/xx@etc.*
 .netrwhist
