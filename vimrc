@@ -80,6 +80,7 @@ Plug 'dahu/vim-KWEasy'
 Plug 'dahu/vim-fanfingtastic'
 Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/vim-easy-align'
+Plug 'mbbill/undotree'
 Plug 'mhinz/vim-hugefile'
 Plug 'rking/ag.vim'
 Plug 'thinca/vim-visualstar'
@@ -721,6 +722,50 @@ endfunction
 "}}}
 "}}}
 "{{{ Mappings and commands
+"{{{ `<Leader>u…` — Undo/redo
+
+command! -bar OpenHistoryBrowser UndotreeHide | UndotreeShow
+
+" Toggle undo history browser
+noremap <silent> <Leader>ub :UndotreeToggle<CR>
+
+" Toggle undo history browser, giving it focus when opening it
+noremap <silent> <Leader>uB :OpenHistoryBrowserWithFocus<CR>
+command! -bar OpenHistoryBrowserWithFocus
+	\  let g:undotree_SetFocusWhenToggle = 1
+	\| OpenHistoryBrowser
+	\| let g:undotree_SetFocusWhenToggle = 0
+
+noremap <silent> <Leader>ud :OpenHistoryBrowserWithCollapsedDiff<CR>
+noremap <silent> <Leader>uD :OpenHistoryBrowserWithExpandedDiff<CR>
+command! -bar OpenHistoryBrowserWithCollapsedDiff
+	\  let g:undotree_WindowLayout = 3
+	\| OpenHistoryBrowser
+command! -bar OpenHistoryBrowserWithExpandedDiff
+	\  let g:undotree_WindowLayout = 4
+	\| OpenHistoryBrowser
+
+" View undo-tree leaves
+noremap <silent> <Leader>ul :undolist<CR>
+
+" Undo Write — revert to the previously written state (can be used multiple
+" times to go back through the write history)
+noremap <silent> <Leader>uw :earlier 1f<CR>
+noremap <silent> <Leader>uW :later 1f<CR>
+
+noremap <silent> <Leader>u<Left> :earlier<Space>
+noremap <silent> <Leader>u<Right> :later<Space>
+
+noremap <Leader>u<Up> g+
+noremap <Leader>u<Down> g-
+
+" I don’t know whether the `+1` is really necessary, but better safe.
+command! -bar UndoToEarliestState execute 'earlier' len(undotree().entries)+1
+command! -bar RedoToLatestState execute 'later' len(undotree().entries)+1
+noremap <silent> <Leader>u<Home> :UndoToEarliestState<CR>
+noremap <silent> <Leader>u<End> :RedoToLatestState<CR>
+
+"}}}
 "{{{ Spell files
 
 command! UpdateSpellfile call UpdateSpellfile()
@@ -780,6 +825,12 @@ if executable('/run/current-system/sw/bin/racer')
 	" path known to be that of a directory.
 	let $RUST_SRC_PATH = '/run'
 endif
+
+"}}}
+"{{{ undotree
+
+let g:undotree_WindowLayout = 3
+let g:undotree_SplitWidth = 32
 
 "}}}
 "}}}
