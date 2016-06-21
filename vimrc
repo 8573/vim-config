@@ -186,7 +186,7 @@ set shortmess=I
 " QUADRUPLE DASH HORIZONTAL and `.` being a U+00A0 NO-BREAK SPACE.
 set showbreak=┈ ┈  
 " See `set ruler`.
-"set showcmd " Set by sensible.
+set showcmd
 set showfulltag
 set showtabline=2
 set smartcase
