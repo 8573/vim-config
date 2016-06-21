@@ -98,6 +98,6 @@ let b:ircChanPat = '\v%([#+&]|!%(\u|\d){5})[^ ,:\n\r\x00\x07]{,49}%(:[^ ,:\n\r\x
 setlocal autoread
 " Refresh
 noremap <buffer> <Leader>r :checktime<CR>
-if exists(':HideBadWhitespace') == 2
+if exists(':HideBadWhitespace') == 2 && &l:readonly
 	HideBadWhitespace
 endif
