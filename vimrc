@@ -209,6 +209,8 @@ set wrapscan
 
 setglobal fileencoding=utf-8
 
+let g:mapleader = ' '
+
 let g:vim_main_spelllang = 'en'
 
 "}}}
@@ -738,6 +740,75 @@ endfunction
 "}}}
 "}}}
 "{{{ Mappings and commands
+"{{{ Miscellaneous
+
+" Like :normal, but doesn’t eat bars.
+command! -nargs=1 -bar Normal execute 'normal' <q-args>
+
+"{{{ Make `ZZ` and `ZQ` ask for confirmation.
+" They’re just too dangerous otherwise.
+
+function! ZZ()
+	if PromptChar('Save and close? Type ‘Y’ to confirm or anything else to cancel…')
+			\ ==# 'Y'
+		xit
+	else
+		echo 'ZZ (save and close) canceled.'
+	endif
+endfunction
+function! ZQ()
+	if PromptChar('Close without saving? Type ‘Y’ to confirm or anything else to cancel…')
+			\ ==# 'Y'
+		quit!
+	else
+		echo 'ZQ (close without saving) canceled.'
+	endif
+endfunction
+
+command! -bar ZZ call ZZ()
+command! -bar ZQ call ZQ()
+
+noremap <silent> ZZ :ZZ<CR>
+noremap <silent> ZQ :ZQ<CR>
+"}}}
+
+" Cf. `gp`.
+vnoremap gy y`>
+
+" With this, if I use a leader-prefixed mapping that turns out to not exist,
+" it gets dumped into a command line, rather than being interpreted sans
+" leader.
+noremap <Leader> :
+
+imap <Esc> <C-O><Leader>
+
+noremap <C-H> :tab help<Space>
+inoremap <C-H> <C-C>:tab help<Space>
+
+imap <C-L> <C-C><C-L>gi
+
+noremap Q gq
+
+vnoremap <A-<> <gv
+vnoremap <A->> >gv
+
+" Matches 'pastetoggle' (which would itself work if I didn't re-`imap` <Esc>
+" above).
+inoremap <silent> <Esc>\ <C-O>:set invpaste<CR>
+
+"{{{ `:CountOccurrences`
+
+function! CountOccurrences(pattern)
+	let s:n = 0
+	execute 'global' . a:pattern . 'let s:n += 1'
+	echo s:n
+	unlet s:n
+endfunction
+
+command! -nargs=1 CountOccurrences call CountOccurrences(<q-args>)
+
+"}}}
+"}}}
 "{{{ `<Leader>u…` — Undo/redo
 
 command! -bar OpenHistoryBrowser UndotreeHide | UndotreeShow
