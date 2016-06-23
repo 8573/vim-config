@@ -152,6 +152,7 @@ MacPorts
 Matasano
 McKinsey
 Minas Tirith
+Mosh's
 Mousera
 NEMA
 NSA
@@ -194,6 +195,7 @@ RCC
 README
 REPL
 RHEL
+RO
 Rancho Palos Verdes
 Rasoi
 Reykjavik/!
@@ -1911,6 +1913,7 @@ mitzvah
 modeline
 modelines
 mole
+mosh
 multilevelness
 multiplayer
 nABNF
@@ -2639,6 +2642,7 @@ timestamping
 timestampings
 timestamps
 tmux
+tmux's
 toplevel
 toplevels
 transpersonal
@@ -3250,4 +3254,3 @@ zsh
 ’d
 ’ing
 ’s
-RO
