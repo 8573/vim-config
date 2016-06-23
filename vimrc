@@ -783,7 +783,6 @@ noremap <Leader> :
 imap <Esc> <C-O><Leader>
 
 noremap <C-H> :tab help<Space>
-inoremap <C-H> <C-C>:tab help<Space>
 
 imap <C-L> <C-C><C-L>gi
 
