@@ -190,7 +190,7 @@ set showcmd
 set showfulltag
 set showtabline=2
 set smartcase
-set suffixes+=~,.bak,.swp,.blg,brf,.cb,.ind,.idx,.ilg,.inx,.toc
+set suffixes+=~,.aux,.bak,.bbl,.blg,.brf,.cb,.dvi,.idx,.ilg,.ind,.inx,.jpg,.o,.out,.png,.swp,.toc
 " I found that the quantity of times I regretted losing my undo history on
 " close was less than the quantity of times I wanted to use the start of that
 " history as an “anchor” to a “clean” state, and found that I’d gotten lost in
