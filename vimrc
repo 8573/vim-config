@@ -147,6 +147,7 @@ set formatoptions-=t
 set hidden
 set hlsearch
 set ignorecase
+set nojoinspaces
 set lazyredraw
 set linebreak
 "set matchpairs+=<:>
