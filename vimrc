@@ -743,6 +743,35 @@ function! Qalc(expr)
 		\ '.* = \(.*\)\n', '\1', '')
 endfunction
 "}}}
+"{{{ WithOrigRuntimepath(action[, args...])
+function! WithOrigRuntimepath(action)
+	let l:rtp = &runtimepath
+	let &runtimepath = g:vimrc_orig_runtimepath
+
+	if type(a:action) == type(function('tr'))
+		return call(a:action, a:000)
+	elseif type(a:action) == type('')
+		if a:0 != 0
+			throw "`args` may only be provided if `action` is a function"
+		endif
+		execute a:action
+	else
+		throw "Don't know how to run `action`"
+	endif
+
+	let &runtimepath = l:rtp
+endfunction
+"}}}
+"{{{ LookUpFileInOrigRuntimepath(filename)
+function! LookUpFileInOrigRuntimepath(filename)
+	for l:dir in g:vimrc_orig_runtimepath_dirs
+		let l:file = l:dir + '/' + a:filename
+		if filereadable(l:file)
+			return l:file
+		endif
+	endfor
+endfunction
+"}}}
 "}}}
 "{{{ Mappings and commands
 "{{{ Miscellaneous
