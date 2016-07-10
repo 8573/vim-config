@@ -1,10 +1,6 @@
 " Settings for all files, to be applied after filetype, and filekind, plugins
 " run.
 
-if !&textwidth
-	setlocal textwidth=78
-endif
-
 if exists('+breakindent') && &breakindent && exists('+showbreak')
 	let s:i = &tabstop ? &tabstop : &shiftwidth
 	let s:i = ((s:i ? s:i : &softtabstop) / 2) - 1
