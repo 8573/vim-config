@@ -843,6 +843,196 @@ command! -nargs=1 CountOccurrences call CountOccurrences(<q-args>)
 
 "}}}
 "}}}
+"{{{ `<Leader><[iIaAoO]>` — Insertion macro machinery
+"   - `<Leader>i` inserts before the cursor.
+"   - `<Leader>a` inserts after the cursor.
+"   - `<Leader>I` inserts at the start of the current line.
+"   - `<Leader>A` inserts at the end of the current line.
+"   - `<Leader>o` inserts on a new line below the cursor.
+"   - `<Leader>O` inserts on a new line above the cursor.
+
+for s:m in split('iIaAoO', '\zs')
+	execute 'noremap <silent> <Leader>' . s:m
+		\ ':call <SID>LeaderInsert(' string(s:m) ')<CR>'
+endfor
+
+let [s:leaderInserts, s:leaderInsertKeys] = [{}, []]
+
+"{{{ s:LeaderInsert(imode)
+function! s:LeaderInsert(imode)
+	if a:imode !~? '^[iao]$'
+		throw 's:LeaderInsert(imode): `imode` must be in ''iIaAoO'', but it is ' . string(a:imode)
+	endif
+
+	let [l:s, l:c] = ['', '']
+
+	echon '<Leader>' a:imode
+
+	while 1
+		let l:c = ReadChar()
+
+		echon l:c
+
+		if l:c == "\<C-C>"
+			return
+		elseif l:c == "\<NL>" || l:c == "\<CR>"
+			let l:s = PromptLine('', '',
+				\ 'custom,LeaderInsertCompleter')
+			break
+		endif
+
+		let l:s .= exists('mapleader') && maparg(l:c) == mapleader
+			\ ? mapleader : l:c
+
+		if has_key(s:leaderInserts, l:s)
+			execute 'normal!' a:imode
+				\ . "\<C-R>\<C-R>=InputLocked("
+				\ string(s:leaderInserts[l:s]) ")\<CR>"
+			return
+		endif
+
+		if match(s:leaderInsertKeys,
+				\ '^' . VerbatimPattern(l:s)) == -1
+			echoerr 'leader-insert macro' string(l:s) 'not found'
+			return
+		endif
+	endwhile
+
+	throw 'unreachable'
+endfunction
+"}}}
+"{{{ LeaderInsertCompleter(...)
+function! LeaderInsertCompleter(...)
+	return join(s:leaderInsertKeys, "\n")
+endfunction
+"}}}
+"{{{ s:DfnInsertMacro(key, expr)
+function! s:DfnInsertMacro(key, expr)
+	let s:leaderInserts[a:key] = a:expr
+	call add(s:leaderInsertKeys, a:key)
+endfunction
+"}}}
+
+"}}}
+"{{{ `<Leader>it…` — Insert Timestamp
+"  `<Leader>itZP` — insert timestamp in timezone Z to precision P.
+"  Z can be…
+"    `u`, for UTC;
+"    `l`, for local time; or
+"    `z`, to open a prompt at which one can enter a timezone to use.
+"  Z can also be upper-case. If Z is upper-case, the timezone will not
+"    be included in the inserted timestamp.
+"  P can be…
+"    `s`, for seconds;
+"    `m`, for minutes;
+"    `h`, for hours;
+"    `d`, for days;
+"    `n`, for months;
+"    `y`, for years;
+"    `z`, to insert only the timezone’s offset from UTC;
+"    `Z`, to insert only the timezone’s abbreviated name; or
+"    `x`, to open a prompt at which one can enter a strftime format string to
+"         use.
+"  P can also be `S`, `M`, `H`, `D`, `N`, or `Y`; these function like their
+"    lower-case equivalents, except that the inserted timestamp will be
+"    *from*, rather than *to*, the specified precision.
+"  Examples (with the local time being 2014-12-31 23:45:55 -0200):
+"      `<Leader>itus` → ‘2015-01-01 01:45:55 UTC’
+"      `<Leader>itlm` → ‘2014-12-31 23:45 -0200’
+"      `<Leader>itlH` → ‘23:45:55 -0200’
+"      `<Leader>itUy` → ‘2015’
+"      `<Leader>itlz` → ‘-0200’
+
+function! s:DfnInsertTimestampKey(key, fmt)
+	let l:fmt = a:fmt =~ '%' ? shellescape(a:fmt) : a:fmt
+
+	function s:m(key, expr)
+		let l:x = 'substitute(' . a:expr . ', ''\n$'', '''', '''')'
+		"execute 'noremap <silent> <Leader>it' . a:key
+		"	\ '"=' . l:x . '<CR>P:Right<CR>'
+		"execute 'inoremap <silent> <Esc>it' . a:key
+		"	\ '<C-R><C-R>=' . l:x . '<CR>'
+		call s:DfnInsertMacro('t' . a:key, l:x)
+	endfunction
+
+	call s:m('u' . a:key,
+		\ 'system(''date -u '' . ShellEsc(''+'' . '
+		\ . l:fmt . ' . '' %Z''))')
+	call s:m('l' . a:key,
+		\ 'strftime(' . l:fmt . '.'' %z'')')
+	call s:m('z' . a:key,
+		\ 'system("TZ=" . ShellEsc(PromptLine("Timezone: ")) . " date " . ShellEsc("+" . '
+		\ . l:fmt . ' . " %z"))')
+	call s:m('U' . a:key,
+		\ 'system("date -u " . ShellEsc("+" . ' . l:fmt . '))')
+	call s:m('L' . a:key,
+		\ 'strftime(' . l:fmt . ')')
+	call s:m('Z' . a:key,
+		\ 'system("TZ=" . ShellEsc(PromptLine("Timezone: ")) . " date " . ShellEsc("+" . '
+		\ . l:fmt . '))')
+
+	delfunction s:m
+endfunction
+
+for [s:key, s:fmt] in [
+\	['s', '%F %T'],
+\	['m', '%F %H:%M'],
+\	['h', '%F %H'],
+\	['d', '%F'],
+\	['n', '%Y-%m'],
+\	['y', '%Y'],
+\	['S', '%S'],
+\	['M', '%M:%S'],
+\	['H', '%T'],
+\	['D', '%d %T'],
+\	['N', '%m-%d %T'],
+\	['Y', '%F %T'],
+\	['z', '%z'],
+\	['Z', '%Z'],
+\	['x', 'PromptLine("strftime format string: ")']
+\]
+	call s:DfnInsertTimestampKey(s:key, s:fmt)
+endfor
+unlet s:key s:fmt
+
+"}}}
+"{{{ `<Leader>i.n` — Insert Repeatedly, N times
+
+call s:DfnInsertMacro('.n', 'GetInsertRepeatedlyNTimesString()')
+
+function! GetInsertRepeatedlyNTimesString()
+	let l:s = PromptLine('String to repeatedly insert: ')
+	let l:n = PromptLine('Repetition quantity: ')
+	return repeat(l:s, l:n)
+endfunction
+
+"}}}
+"{{{ `<Leader>i.c` — Insert Repeatedly, to Column
+
+call s:DfnInsertMacro('.c', 'GetInsertRepeatedlyToColumnString()')
+
+function! GetInsertRepeatedlyToColumnString()
+	let l:s = PromptLine('String to repeatedly insert: ')
+	let l:col = PromptLine('Column to insert to: ')
+	let l:n = l:col - col('.')
+	let l:s = repeat(l:s, l:n+1)
+	if l:n > 0 || l:s == ''
+		return l:s
+	elseif l:n < 0
+		echoerr 'you are already past column' l:col
+	else
+		echoerr 'you are already at column' l:col
+	endif
+	return ''
+endfunction
+
+"}}}
+"{{{ `<Leader>i\<…>` — Insert Miscellaneous
+
+" Elision marker
+call s:DfnInsertMacro('\Em', string('[…]'))
+
+"}}}
 "{{{ `<Leader>u…` — Undo/redo
 
 command! -bar OpenHistoryBrowser UndotreeHide | UndotreeShow
