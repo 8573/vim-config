@@ -118,6 +118,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 
 " File-type-specific plug-ins.
+Plug 'godlygeek/tabular' | Plug 'plasticboy/vim-markdown', {'for': 'markdown'}
 Plug 'rust-lang/rust.vim', {'for': 'rust'}
 Plug 'racer-rust/vim-racer', {'for': 'rust'}
 
