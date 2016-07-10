@@ -1094,6 +1094,64 @@ endfunction
 
 call RegisterFileType('GIT_HUB_EDIT_MSG', 'gitcommit')
 
+"{{{ File kinds
+
+let g:vimrc_file_kinds = {
+	\	'text': [],
+	\		'document': [],
+	\		'message': [],
+	\	'code': [],
+	\		'program-source': [],
+	\		'configuration': [],
+	\		'data-storage': [],
+	\ }
+
+"{{{ ApplyFileKindSettings()
+function! ApplyFileKindSettings()
+	for [l:kind, l:types] in items(g:vimrc_file_kinds)
+		if IsInList(l:types, &l:filetype)
+			call SetFileKind(l:kind)
+		endif
+	endfor
+endfunction
+"}}}
+"{{{ FileKindSetup()
+function! FileKindSetup()
+	call LoadFileKindTypes()
+	call ApplyFileKindSettings()
+	autocmd Filetype * call ApplyFileKindSettings()
+	autocmd OptionSet modifiable,readonly call ApplyFileKindSettings()
+endfunction
+"}}}
+"{{{ FileKindTypeListPath(kind)
+function! FileKindTypeListPath(kind)
+	return g:vim_homedir . '/lib/filekinds/type-lists/' . a:kind
+endfunction
+"}}}
+"{{{ LoadFileKindTypes()
+function! LoadFileKindTypes()
+	for [l:kind, l:types] in items(g:vimrc_file_kinds)
+		call extend(l:types, ReadFileKindTypes(l:kind))
+	endfor
+endfunction
+"}}}
+"{{{ ReadFileKindTypes(kind)
+function! ReadFileKindTypes(kind)
+	return readfile(FileKindTypeListPath(a:kind))
+endfunction
+"}}}
+"{{{ SetFileKind(kind)
+function! SetFileKind(kind)
+	execute 'runtime! lib/filekinds/fkplugin/' . a:kind . '.vim'
+	let b:filekind = a:kind
+	runtime! lib/filekinds/fkplugin/all.vim
+endfunction
+"}}}
+
+autocmd VimEnter * call FileKindSetup()
+
+"}}}
+
 "}}}
 "{{{ Epilog
 "{{{ Create state directories
