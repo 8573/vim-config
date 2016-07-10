@@ -57,6 +57,9 @@ let g:vim_homedir = g:vimrc_HOME . '/.vim'
 
 " TODO: Check that `g:vim_homedir` is writable only for owner.
 
+let g:vimrc_orig_runtimepath = &g:runtimepath
+let g:vimrc_orig_runtimepath_dirs = split(g:vimrc_orig_runtimepath, ',')
+
 "}}}
 "{{{ Load misc. other configuration scripts
 
