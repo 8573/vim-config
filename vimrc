@@ -773,6 +773,11 @@ function! LookUpFileInOrigRuntimepath(filename)
 	endfor
 endfunction
 "}}}
+"{{{ LocalSource(filepath)
+function! LocalSource(filepath)
+	execute 'source' g:vim_homedir . '/' . a:filepath
+endfunction
+"}}}
 "}}}
 "{{{ Mappings and commands
 "{{{ Miscellaneous
@@ -1285,7 +1290,7 @@ endfunction
 
 call RegisterFileType('GIT_HUB_EDIT_MSG', 'gitcommit')
 
-source rc/filekinds.vim
+call LocalSource('rc/filekinds.vim')
 
 "}}}
 "{{{ Epilog
