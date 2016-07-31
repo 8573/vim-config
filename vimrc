@@ -596,6 +596,26 @@ function! PromptCharOrLine(prompt, ...)
 	return l:r
 endfunction
 "}}}
+"{{{ PromptTimezone()
+function! PromptTimezone()
+	let l:tz = PromptLine("Timezone: ")
+
+	let l:tz_abbrs = {
+		\ "ET": "America/New_York",
+		\ "CT": "America/Chicago",
+		\ "MT": "America/Denver",
+		\ "PT": "America/Los_Angeles",
+		\ }
+
+	for [l:tz_abbr, l:tz_full] in items(l:tz_abbrs)
+		if l:tz ==? l:tz_abbr
+			return l:tz_full
+		endif
+	endfor
+
+	return l:tz
+endfunction
+"}}}
 "{{{ ToggleOpt(opt[, on, off])
 function! ToggleOpt(opt, ...)
 	if a:0 == 0
@@ -966,14 +986,14 @@ function! s:DfnInsertTimestampKey(key, fmt)
 	call s:m('l' . a:key,
 		\ 'strftime(' . l:fmt . '.'' %z'')')
 	call s:m('z' . a:key,
-		\ 'system("TZ=" . ShellEsc(PromptLine("Timezone: ")) . " date " . ShellEsc("+" . '
+		\ 'system("TZ=" . ShellEsc(PromptTimezone()) . " date " . ShellEsc("+" . '
 		\ . l:fmt . ' . " %z"))')
 	call s:m('U' . a:key,
 		\ 'system("date -u " . ShellEsc("+" . ' . l:fmt . '))')
 	call s:m('L' . a:key,
 		\ 'strftime(' . l:fmt . ')')
 	call s:m('Z' . a:key,
-		\ 'system("TZ=" . ShellEsc(PromptLine("Timezone: ")) . " date " . ShellEsc("+" . '
+		\ 'system("TZ=" . ShellEsc(PromptTimezone()) . " date " . ShellEsc("+" . '
 		\ . l:fmt . '))')
 
 	delfunction s:m
