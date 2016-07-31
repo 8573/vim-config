@@ -1,5 +1,6 @@
 " Settings for editing English text.
 
+setlocal expandtab
 setlocal formatoptions+=t
 setlocal spell
 
