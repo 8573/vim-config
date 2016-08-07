@@ -1264,6 +1264,13 @@ function! s:SetHighlights()
 
 let s:linenr_color = synIDattr(hlID('LineNr'), 'fg')
 
+if has('gui_running') && matchstr(s:linenr_color, '^\d*$')
+	" This function will be called again later, and letting it continue
+	" now would result in `RecolorLineNrsForMode` using color identifiers
+	" that are invalid in GUI mode.
+	return
+endif
+
 highlight NonText guibg=grey20
 
 highlight CursorLine cterm=none
