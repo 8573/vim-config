@@ -798,6 +798,19 @@ function! LocalSource(filepath)
 	execute 'source' g:vim_homedir . '/' . a:filepath
 endfunction
 "}}}
+"{{{ AppendToCommaSeparatedOption(option_name, value_to_append)
+function AppendToCommaSeparatedOption(option, value_to_append)
+	execute 'let l:old_val = &' . a:option
+
+	if type(l:old_val) != type('')
+		throw 'AppendToCommaSeparatedOption is only for use on options whose values are of string type.'
+	endif
+
+	let l:new_val = (l:old_val == '' ? '' : ',') . a:value_to_append
+
+	execute 'let &' . a:option . ' .= l:new_val'
+endfunction
+"}}}
 "}}}
 "{{{ Mappings and commands
 "{{{ Miscellaneous
