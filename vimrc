@@ -1205,11 +1205,13 @@ function! TryToCompleteIncompleteFileName()
 	endif
 endfunction
 
-autocmd BufRead,BufNewFile *
-	\ let &l:spellfile = join(map(
-	\   ['xx@etc', g:vim_main_spelllang],
-	\   'g:vim_homedir . "/spell/" . v:val . "." . &l:encoding . ".add"'),
-	\   ',')
+autocmd BufRead,BufNewFile * call s:set_spellfile()
+function s:set_spellfile()
+	let l:spelllangs = ['xx@etc', g:vim_main_spelllang]
+	let l:map_expr = 'g:vim_homedir . "/spell/" . v:val . "." . &l:encoding . ".add"'
+	let l:spellfiles = join(map(l:spelllangs, l:map_expr), ',')
+	call AppendToCommaSeparatedOption('l:spellfile', l:spellfiles)
+endfunction
 
 "}}}
 "{{{ Display customization
