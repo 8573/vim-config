@@ -1284,9 +1284,10 @@ if has('gui_running') && matchstr(s:linenr_color, '^\d*$')
 	return
 endif
 
-highlight NonText guibg=grey20
+highlight Normal guibg=grey10
+highlight NonText guibg=grey10
 
-highlight CursorLine cterm=none
+highlight CursorLine cterm=none guibg=grey20
 highlight CursorLineNr cterm=bold
 
 if &t_Co >= 8
