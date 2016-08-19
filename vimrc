@@ -224,6 +224,14 @@ let g:vim_main_spelllang = 'en'
 
 if has('gui_running')
 	set guifont=DejaVu\ Sans\ Mono\ 13,Monospace\ 12
+
+	if fnamemodify(bufname('%'), ':h:r') =~# 'vim-pager'
+		" The only difference between size 12 and size 13 of DejaVu
+		" Sans Mono seems to be that the latter has slightly more
+		" vertical space between lines, which I seem to like for
+		" editing and seem to dislike for paging.
+		set guifont=DejaVu\ Sans\ Mono\ 12,Monospace\ 12
+	endif
 endif
 
 "}}}
