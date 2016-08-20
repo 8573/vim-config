@@ -1287,7 +1287,7 @@ function! s:SetHighlights()
 
 let s:linenr_color = synIDattr(hlID('LineNr'), 'fg')
 
-if has('gui_running') && matchstr(s:linenr_color, '^\d*$')
+if has('gui_running') && match(s:linenr_color, '^\d*$') != -1
 	" This function will be called again later, and letting it continue
 	" now would result in `RecolorLineNrsForMode` using color identifiers
 	" that are invalid in GUI mode.
