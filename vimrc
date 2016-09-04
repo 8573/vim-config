@@ -1172,6 +1172,8 @@ let g:delimitMate_expand_cr = 1
 
 let g:EasyMotion_smartcase = 1
 
+map <CR> <Plug>(easymotion-s2)
+
 "}}}
 "{{{ Racer
 
