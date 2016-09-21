@@ -57,10 +57,10 @@ function! HighlightIrcNick(
 		let l:nick .= NrToChar(1 + (l:c % 126), 1)
 	endwhile
 	if s:HighlightNicksEverywhere
-		execute 'syntax match IrcLogNickMention'.l:hash
+		execute 'syntax match IrcLogNick'.l:hash
 			\ '"\<' . l:nickPat . '\>"'
 			\ 'display contained '
-		execute 'highlight IrcLogNickMention'.l:hash 'ctermfg='.l:c
+		execute 'highlight IrcLogNick'.l:hash 'ctermfg='.l:c
 	else
 		execute 'syntax match IrcLogNickMessage'.l:hash
 			\ a:msgPre . '\zs' . l:nickPat . '\m\ze' . a:msgPost

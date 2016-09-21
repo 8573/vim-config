@@ -21,16 +21,16 @@ execute 'syntax match WeechatLogTimestamp "\v^.{-}\ze%(\<[@+ %~*]?\k+\>|\<+--+|-
 syntax match WeechatLogInfo '\v%(\<+--+|--+\>+|-+!*-+)[\t ].*$'
 	\ contains=WeechatLogNotice
 syntax match WeechatLogMessage '\v\<[@+ %~*]?\k+\>[\t ].*$'
-	\ contains=IrcLogNickMessage.*
+	\ contains=IrcLogNick.*
 syntax match WeechatLogAction '\v[\t ]-?\*-?[\t ]\k+ .*$'
-	\ contains=IrcLogNickAction.*
+	\ contains=IrcLogNick.*
 syntax match WeechatLogNotice '\v-+!+-+[\t ]\zsNotice\(\k+\): .*$'
 	\ contains=WeechatLogNoticeMarker
 execute 'syntax match IrssiLogNotice "\v\d +\zs-\k+:'
 	\ . b:ircChanPat . '- .*$"'
-	\ 'contains=IrcLogNickNotice.*'
+	\ 'contains=IrcLogNick.*'
 syntax match WeechatLogNoticeMarker 'Notice(\k\+):'
-	\ contains=IrcLogNickNotice.*
+	\ contains=IrcLogNick.*
 	\ contained
 syntax match WeechatLogComment '\v^---.*|^\[\_.{-}\]$'
 

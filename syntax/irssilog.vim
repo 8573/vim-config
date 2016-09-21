@@ -14,11 +14,11 @@ execute 'syntax match IrssiLogTimestamp "\v^.{-}\ze%(\<[@+ %*]?\k+\>|-!-| \* \k+
 	\ . b:ircChanPat . '-)"'
 syntax match IrssiLogInfo '-!- .*$'
 syntax match IrssiLogMessage '\v\<[@+ %*]?\k+\> .*$'
-	\ contains=IrcLogNickMessage.*
+	\ contains=IrcLogNick.*
 syntax match IrssiLogAction '\v \* \k+ .*$'
-	\ contains=IrcLogNickAction.*
+	\ contains=IrcLogNick.*
 execute 'syntax match IrssiLogNotice "\v-\k+:' . b:ircChanPat . '- .*$"'
-	\ 'contains=IrcLogNickNotice.*'
+	\ 'contains=IrcLogNick.*'
 syntax match IrssiLogComment '\v^---.*|^\[\_.{-}\]$'
 
 highlight link IrssiLogInfo IrcLogInfo
