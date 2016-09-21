@@ -8,7 +8,7 @@ scriptencoding utf-8
 " Supports coloring different nicks differently (within the limits of the
 " color palette).
 
-let s:HighlightNicksEverywhere = 0
+let s:HighlightNicksEverywhere = 1
 
 highlight link IrcLogMessage Normal
 highlight link IrcLogAction IrcLogMessage
