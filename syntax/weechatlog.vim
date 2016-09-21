@@ -15,9 +15,7 @@ if exists('s:s')
 	unlet s:s
 endif
 
-"syntax match WeechatLogTimestamp '\v^.{-}\ze%(\<[@+ %~*]?\k+\>|\<+--+|--+\>+|-+!*-+|[\t ]-?\*-?[\t ]\k+) '
-execute 'syntax match WeechatLogTimestamp "\v^.{-}\ze%(\<[@+ %~*]?\k+\>|\<+--+|--+\>+|-+!*-+|[\t ]-?\*-?[\t ]\k+|-\k+:'
-	\ . b:ircChanPat . '-)"'
+execute 'syntax match WeechatLogTimestamp "^[^\t]\+"'
 syntax match WeechatLogInfo '\v%(\<+--+|--+\>+|-+!*-+)[\t ].*$'
 	\ contains=WeechatLogNotice
 syntax match WeechatLogMessage '\v\<[@+ %~*]?\k+\>[\t ].*$'
