@@ -42,6 +42,11 @@ highlight link WeechatLogNotice IrcLogMessage
 highlight WeechatLogNoticeMarker ctermfg=darkgreen
 highlight link WeechatLogComment IrcLogComment
 
+syntax match HorizontalTab '\t' conceal cchar=  containedin=.*
+highlight clear Conceal
+highlight link Conceal Normal
+setlocal conceallevel=2 concealcursor+=nc
+
 " Yes, this belongs in a ftplugin, but it uses `\k`, which is defined in
 " `syntax/irclog-dyn.vim`.
 let &l:showbreak = repeat(' ', 4 + len(matchstr(GetBufferText(),
