@@ -1257,8 +1257,9 @@ autocmd FileType netrw nested call s:load_colorscheme()
 "}}}
 "{{{ Color line numbers differently in and out of Insert mode.
 function! RecolorLineNrsForMode(insert)
-	let l:normal_hl =
-		\ 'ctermfg=' . s:linenr_color . ' guifg=' . s:linenr_color
+	let l:normal_hl = has('gui_running')
+		\ ? 'guifg=' . s:linenr_color
+		\ : 'ctermfg=' . s:linenr_color
 	let l:insert_linenr_color_cterm = s:linenr_color !=? 'darkgreen'
 		\ ? 'darkgreen' : 'green'
 	let l:insert_linenr_color_gui = s:linenr_color !=? 'cyan'
