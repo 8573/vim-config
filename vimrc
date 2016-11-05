@@ -754,6 +754,11 @@ function! SHA256(string)
 			\ . ShellEsc(a:string) . ')'), '\S\+')
 endfunction
 "}}}
+"{{{ SHA256AsNr(string)
+function! SHA256AsNr(string)
+	return str2nr(SHA256(a:string), 16)
+endfunction
+"}}}
 "{{{ MD5(string)
 function! MD5(string)
 	return matchstr(
