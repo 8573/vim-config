@@ -39,7 +39,7 @@ highlight link WeechatLogTimestamp IrcLogTimestamp
 highlight link WeechatLogMessage IrcLogMessage
 highlight link WeechatLogAction IrcLogAction
 highlight link WeechatLogNotice IrcLogMessage
-highlight WeechatLogNoticeMarker ctermfg=darkgreen
+highlight WeechatLogNoticeMarker ctermfg=darkgreen guifg=darkgreen
 highlight link WeechatLogComment IrcLogComment
 
 syntax match HorizontalTab '\t' conceal cchar=  containedin=.*
