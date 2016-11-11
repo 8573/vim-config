@@ -4,15 +4,15 @@ source ~/.vim/syntax/irclog-dyn.vim
 
 function! s:apply()
 
-for s:s in MatchesInBufferSansEmptiesAndDups('\v\<[@+%*]?\zs\k+\ze\>| \* \zs\k+\ze|\[\zs\k+\ze\]')
+for s:s in MatchesInBufferSansEmptiesAndDups('\v\<[@+ %~*&!]?\zs\k+\ze\>| \* \zs\k+\ze|\[\zs\k+\ze\]')
 	call HighlightIrcNick(s:s,
-		\ '"\v\<[@+%*]?', '>"', '"-\*- ', ' "', '"\[', '\]"')
+		\ '"\v\<[@+ %~*&!]?', '>"', '"-\*- ', ' "', '"\[', '\]"')
 endfor
 
-"syntax match QuasselLogTimestamp "\v^\[[^]]+\]\ze %(\<[@+%*]?\k+\>|[-<>*=]{1,3}|\[\k+\])"
+"syntax match QuasselLogTimestamp "\v^\[[^]]+\]\ze %(\<[@+ %~*&!]?\k+\>|[-<>*=]{1,3}|\[\k+\])"
 syntax match QuasselLogTimestamp "\v^\[[^\]]+\]\ze "
 syntax match QuasselLogInfo '\v[-<>*=]{1,3} .*$'
-syntax match QuasselLogMessage '\v\<[@+%*]?\k+\> .*$'
+syntax match QuasselLogMessage '\v\<[@+ %~*&!]?\k+\> .*$'
 	\ contains=IrcLogNickMessage.*
 syntax match QuasselLogAction '\v-\*- \k+ .*$'
 	\ contains=IrcLogNickAction.*

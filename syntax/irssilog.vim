@@ -4,16 +4,16 @@ source ~/.vim/syntax/irclog-dyn.vim
 
 function! s:apply()
 
-for s:s in MatchesInBufferSansEmptiesAndDups('\v\<[@+ %*]?\zs\k+\ze\>| \* \zs\k+')
+for s:s in MatchesInBufferSansEmptiesAndDups('\v\<[@+ %~*&!]?\zs\k+\ze\>| \* \zs\k+')
 	call HighlightIrcNick(s:s,
-		\ '"\v\<[@+ %*]?', '>"', '" \* ', ' "', '"-', ':"')
+		\ '"\v\<[@+ %~*&!]?', '>"', '" \* ', ' "', '"-', ':"')
 endfor
 
-"syntax match IrssiLogTimestamp '\v^.{-}\ze%(\<[@+ %*]?\k+\>|-!-| \* \k+) '
-execute 'syntax match IrssiLogTimestamp "\v^.{-}\ze%(\<[@+ %*]?\k+\>|-!-| \* \k+|-\k+:'
+"syntax match IrssiLogTimestamp '\v^.{-}\ze%(\<[@+ %~*&!]?\k+\>|-!-| \* \k+) '
+execute 'syntax match IrssiLogTimestamp "\v^.{-}\ze%(\<[@+ %~*&!]?\k+\>|-!-| \* \k+|-\k+:'
 	\ . b:ircChanPat . '-)"'
 syntax match IrssiLogInfo '-!- .*$'
-syntax match IrssiLogMessage '\v\<[@+ %*]?\k+\> .*$'
+syntax match IrssiLogMessage '\v\<[@+ %~*&!]?\k+\> .*$'
 	\ contains=IrcLogNick.*
 syntax match IrssiLogAction '\v \* \k+ .*$'
 	\ contains=IrcLogNick.*
@@ -30,7 +30,7 @@ highlight link IrssiLogComment IrcLogComment
 " Yes, this belongs in a ftplugin, but it uses `\k`, which is defined in
 " `syntax/irclog-dyn.vim`.
 let &l:showbreak = repeat(' ', 4 + len(matchstr(GetBufferText(),
-	\ '\v\n\zs[^\\n]{-}\ze%(\<[@+ %*]?\k+\>|-!-| \* \k+|-\k+:'
+	\ '\v\n\zs[^\\n]{-}\ze%(\<[@+ %~*&!]?\k+\>|-!-| \* \k+|-\k+:'
 	\ . b:ircChanPat . '-)')))
 let &l:breakat = ' '
 

@@ -5,9 +5,9 @@ function! s:apply()
 source ~/.vim/syntax/irclog-dyn.vim
 
 for s:s in MatchesInBufferSansEmptiesAndDups(
-		\ '\v\<[@+ %~*]?\zs\k+\ze\>|[\t ]-?\*-?[\t ]\zs\k+|[\t ]Notice\(\zs\k+\ze\)')
+		\ '\v\<[@+ %~*&!]?\zs\k+\ze\>|[\t ]-?\*-?[\t ]\zs\k+|[\t ]Notice\(\zs\k+\ze\)')
 	call HighlightIrcNick(s:s,
-		\ '"\v\<[@+ %~*]?', '>"', '" -\?\*-\? ', ' "',
+		\ '"\v\<[@+ %~*&!]?', '>"', '" -\?\*-\? ', ' "',
 		\ '"\v%(Notice\(| -)', ')\?:"')
 endfor
 
@@ -15,12 +15,12 @@ if exists('s:s')
 	unlet s:s
 endif
 
-"syntax match WeechatLogTimestamp '\v^.{-}\ze%(\<[@+ %~*]?\k+\>|\<+--+|--+\>+|-+!*-+|[\t ]-?\*-?[\t ]\k+) '
-execute 'syntax match WeechatLogTimestamp "\v^.{-}\ze%(\<[@+ %~*]?\k+\>|\<+--+|--+\>+|-+!*-+|[\t ]-?\*-?[\t ]\k+|-\k+:'
+"syntax match WeechatLogTimestamp '\v^.{-}\ze%(\<[@+ %~*&!]?\k+\>|\<+--+|--+\>+|-+!*-+|[\t ]-?\*-?[\t ]\k+) '
+execute 'syntax match WeechatLogTimestamp "\v^.{-}\ze%(\<[@+ %~*&!]?\k+\>|\<+--+|--+\>+|-+!*-+|[\t ]-?\*-?[\t ]\k+|-\k+:'
 	\ . b:ircChanPat . '-)"'
 syntax match WeechatLogInfo '\v%(\<+--+|--+\>+|-+!*-+)[\t ].*$'
 	\ contains=WeechatLogNotice
-syntax match WeechatLogMessage '\v\<[@+ %~*]?\k+\>[\t ].*$'
+syntax match WeechatLogMessage '\v\<[@+ %~*&!]?\k+\>[\t ].*$'
 	\ contains=IrcLogNick.*
 syntax match WeechatLogAction '\v[\t ]-?\*-?[\t ]\k+ .*$'
 	\ contains=IrcLogNick.*
@@ -50,7 +50,7 @@ setlocal conceallevel=2 concealcursor+=nc
 " Yes, this belongs in a ftplugin, but it uses `\k`, which is defined in
 " `syntax/irclog-dyn.vim`.
 let &l:showbreak = repeat(' ', 4 + len(matchstr(GetBufferText(),
-	\ '\v\n\zs[^\n]{-}\ze%(\<[@+ %~*]?\k+\>|\<+--+|--+\>+|-+!+-+|[\t ]-?\*-?[\t ]\k+|\d +\zs-\k+:'
+	\ '\v\n\zs[^\n]{-}\ze%(\<[@+ %~*&!]?\k+\>|\<+--+|--+\>+|-+!+-+|[\t ]-?\*-?[\t ]\k+|\d +\zs-\k+:'
 	\ . b:ircChanPat . '-)')))
 let &l:breakat = ' '
 
