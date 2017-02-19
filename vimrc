@@ -759,7 +759,7 @@ endfunction
 "}}}
 "{{{ SHA256AsNr(string)
 function! SHA256AsNr(string)
-	return str2nr(SHA256(a:string), 16)
+	return StrToNrWrapping(SHA256(a:string), 16)
 endfunction
 "}}}
 "{{{ MD5(string)
