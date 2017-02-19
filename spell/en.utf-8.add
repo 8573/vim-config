@@ -40,6 +40,8 @@
 ABI
 ABNF
 ADHD
+ADT
+ADTs
 AFP
 AIs
 AMD64
@@ -65,6 +67,7 @@ Brinker
 Brunton
 CBSA
 CDDL
+CMake
 CTO
 CVE
 CXXFLAGS
@@ -72,10 +75,12 @@ CarPlay
 Cipro
 Clif bar
 Clif bars
+Clojure
 CloudFlare
 CloudFront
 Coq
 Costes
+Coverity
 DDR
 DITP
 DS9
@@ -98,6 +103,8 @@ Fiskerstrand
 FreeBSD
 GADT
 GADTs
+GC
+GCs
 GCC
 GHC
 GLEP
@@ -114,10 +121,12 @@ Gna
 GoodGuide
 Googler
 Googlers
+Graydon's
 HDD
 HDMI
 HTTPS
 Hartsfield–Jackson
+Haskell's
 Haxe
 Heartbleed
 Hercule Poirot
@@ -173,6 +182,7 @@ NixOS
 NixOS
 OCBAN
 OCaml
+OOP
 Oakridge
 Obama
 Occitan
@@ -202,6 +212,7 @@ R4RS
 R5RS
 R6RS
 R7RS
+RAII
 RCC
 README
 REPL
@@ -212,6 +223,8 @@ Rasoi
 Reykjavik/!
 Reykjavík
 Rivendell
+Rustacean
+Rustaceans
 S
 SELinux
 SENG
@@ -220,6 +233,7 @@ SMLD
 SMS
 SNA
 SQLite
+SVG
 SVN
 Sabayon
 Segerstrom
@@ -230,6 +244,7 @@ StartCom
 StartSSL
 SunOS
 Sylvain
+TC39
 TNG
 TODO
 TPD
@@ -380,6 +395,10 @@ attoweber
 attowebers
 autopsychotherapy
 backtrace
+badass
+badassery
+badasses
+badassitude
 baseframe
 baseframes
 becquerel
@@ -1958,6 +1977,7 @@ milliwatt
 milliwatts
 milliweber
 milliwebers
+mindshare
 mirative
 miratives
 mirativity
@@ -2090,10 +2110,13 @@ offputtingly
 ohm
 old-timey
 one’s
+opere
 org
 oughtn’t
+outcompete
 paamayim nekudotayim
 parametricity
+parkour
 pascal
 pebi
 pebiampere
@@ -2410,6 +2433,14 @@ quasiquoter
 quasiquoters
 quasiquoting
 radian
+rasterization
+rasterizations
+rasterize
+rasterized
+rasterizer
+rasterizers
+rasterizing
+rasterizings
 rcn.com
 reStructuredText
 readability
@@ -2734,6 +2765,8 @@ timestampings
 timestamps
 tmux
 tmux's
+toolchain
+toolchains
 toplevel
 toplevels
 transpersonal
