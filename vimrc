@@ -773,6 +773,21 @@ function! Hash(string)
 	return exists('*sha256') ? sha256(a:string) : MD5(a:string)
 endfunction
 "}}}
+"{{{ StrToNrWrapping(string, radix)
+let s:StrToNrWrapping_digits = '0123456789abcdefghijklmnopqrstuvwxyz'
+function! StrToNrWrapping(string, radix)
+	let l:s = tolower(a:string)
+	let l:i = 0
+	let l:i_end = strlen(l:s)
+	let l:r = 0
+	while l:i < l:i_end
+		let l:r = l:r * a:radix
+			\ + stridx(s:StrToNrWrapping_digits, l:s[l:i])
+		let l:i += 1
+	endwhile
+	return l:r
+endfunction
+"}}}
 "{{{ Qalc(expr)
 function! Qalc(expr)
 	return substitute(system('qalc ' . ShellEsc(a:expr)),
