@@ -54,6 +54,9 @@ let g:vimrc_HOME =
 	\	)
 
 let g:vim_homedir = g:vimrc_HOME . '/.vim'
+let s:vim_homedir = g:vim_homedir
+autocmd VimEnter *
+	\ let g:vim_homedir = s:vim_homedir
 
 " TODO: Check that `g:vim_homedir` is writable only for owner.
 
@@ -1222,7 +1225,7 @@ endfunction
 autocmd BufRead,BufNewFile * call s:set_spellfile()
 function s:set_spellfile()
 	let l:spelllangs = ['xx@etc', g:vim_main_spelllang]
-	let l:map_expr = 'g:vim_homedir . "/spell/" . v:val . "." . &l:encoding . ".add"'
+	let l:map_expr = 's:vim_homedir . "/spell/" . v:val . "." . &l:encoding . ".add"'
 	let l:spellfiles = join(map(l:spelllangs, l:map_expr), ',')
 	call AppendToCommaSeparatedOption('l:spellfile', l:spellfiles)
 endfunction
