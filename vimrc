@@ -1209,6 +1209,18 @@ if executable('/run/current-system/sw/bin/racer')
 endif
 
 "}}}
+"{{{ Rust.vim
+
+let g:rust_fold = 1
+
+if executable('/run/current-system/sw/bin/nix-instantiate')
+	let g:rustc_path =
+		\ '$(nix-instantiate "<nixpkgs>" --attr rustc 2>/dev/null)'
+	let g:rustfmt_command =
+		\ '$(nix-instantiate "<nixpkgs>" --attr rustfmt 2>/dev/null)'
+endif
+
+"}}}
 "{{{ undotree
 
 let g:undotree_WindowLayout = 3
