@@ -1242,7 +1242,7 @@ let g:undotree_SplitWidth = 32
 
 autocmd BufNewFile * nested call TryToCompleteIncompleteFileName()
 function! TryToCompleteIncompleteFileName()
-	let l:choices = filter(glob(@% . '*', 0, 1),
+	let l:choices = filter(glob(GlobEsc(@%) . '*', 0, 1),
 		\ 'v:val !~ ''\.swp$'' && stridx(v:val, "\n") == -1')
 	if empty(l:choices) || len(l:choices) > 9
 		return
