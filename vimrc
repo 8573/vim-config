@@ -96,6 +96,7 @@ Plug 'dahu/Nexus'
 " UI/misc. plug-ins.
 Plug 'Raimondi/delimitMate'
 Plug 'Raimondi/vim-transpose-words'
+Plug 'Shougo/denite.nvim'
 Plug 'bitc/vim-bad-whitespace'
 Plug 'ciaranm/securemodelines'
 Plug 'dahu/vim-fanfingtastic'
@@ -1199,6 +1200,25 @@ let g:airline#extensions#tabline#tab_nr_type = 1
 "{{{ delimitMate
 
 let g:delimitMate_expand_cr = 1
+
+"}}}
+"{{{ Denite
+
+noremap <silent> <Leader><CR>b :Denite<Space>buffer<CR>
+noremap <silent> <Leader><CR>f :Denite<Space>file_rec<CR>
+noremap <silent> <Leader><CR>o :Denite<Space>buffer file_rec<CR>
+noremap <silent> <Leader><CR>g :Denite<Space>grep<CR>
+
+" Use Ripgrep for `:Denite grep`. Copied from Denite help.
+if executable('rg')
+	call denite#custom#var('grep', 'command', ['rg'])
+	call denite#custom#var('grep', 'default_opts',
+		\ ['--vimgrep', '--no-heading'])
+	call denite#custom#var('grep', 'recursive_opts', [])
+	call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
+	call denite#custom#var('grep', 'separator', ['--'])
+	call denite#custom#var('grep', 'final_opts', [])
+endif
 
 "}}}
 "{{{ EasyMotion
