@@ -841,6 +841,16 @@ function AppendToCommaSeparatedOption(option, value_to_append)
 	execute 'let &' . a:option . ' .= l:new_val'
 endfunction
 "}}}
+"{{{ GlobEsc(string)
+" Escape a string for use in `glob()`.
+function! GlobEsc(string)
+	return substitute(a:string, '[[*?]', '[&]', 'g')
+endfunction
+
+Assert GlobEsc('') ==# ''
+Assert GlobEsc('abc') ==# 'abc'
+Assert GlobEsc('a[?b*]c') ==# 'a[[][?]b[*]]c'
+"}}}
 "}}}
 "{{{ Mappings and commands
 "{{{ Miscellaneous
