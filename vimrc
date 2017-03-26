@@ -25,6 +25,22 @@ function! GetUID()
 endfunction
 "}}}
 "}}}
+"{{{ Load information re running NixOS installation (if any)
+
+let s:c74d_NixOS_params_file = '/etc/c74d/NixOS/c74d-params.json'
+
+function! LoadC74DNixOSParams()
+	try
+		let l:json = join(readfile(s:c74d_NixOS_params_file), '\n')
+		return json_decode(l:json)
+	catch /.*/
+	endtry
+	return {}
+endfunction
+
+let s:c74d_NixOS_params = LoadC74DNixOSParams()
+
+"}}}
 "{{{ Check whether we're running as superuser
 
 if GetUID() == [0]
