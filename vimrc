@@ -1228,6 +1228,24 @@ let g:EasyMotion_smartcase = 1
 map <CR> <Plug>(easymotion-s2)
 
 "}}}
+"{{{ Netrw
+
+" I tire of the difficulties of closing Netrw buffers. Silently execute them
+" with likely excessive prejudice.
+function! s:netrw_close()
+	for l:i in range(1, bufnr('$'))
+		if getbufvar(l:i, '&filetype') == 'netrw'
+			silent! execute 'bwipeout' l:i
+			if getbufvar(l:i - 1, '&filetype') == ''
+				silent! execute 'bwipeout' (l:i - 1)
+			endif
+		endif
+	endfor
+endfunction
+
+autocmd BufEnter * call s:netrw_close()
+
+"}}}
 "{{{ Racer
 
 if executable('/run/current-system/sw/bin/racer')
