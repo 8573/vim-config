@@ -103,36 +103,55 @@ if !exists('g:vimrc_NO_PLUGINS')
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'tpope/vim-sensible'
+" My NixOS configuration may also not provide Vim plugins if it's in minimal
+" mode, but in that case this configuration should follow the same standard
+" and not provide the plugins that the NixOS configuration wouldn't, so I
+" don't check whether the NixOS configuration is in minimal mode here.
+let s:already_have_system_plugins =
+	\ isdirectory('/etc/c74d/NixOS')
+let s:already_have_personal_plugins =
+	\ get(s:c74d_NixOS_params, 'personal')
 
-" Dependency plug-ins.
-Plug 'tpope/vim-repeat'
-Plug 'dahu/Nexus'
+if !s:already_have_system_plugins
+	Plug 'tpope/vim-sensible'
+
+	" Dependency plug-ins.
+	Plug 'tpope/vim-repeat'
+
+	" UI/misc. plug-ins.
+	Plug 'bitc/vim-bad-whitespace'
+	Plug 'ciaranm/securemodelines'
+	Plug 'mhinz/vim-hugefile'
+	Plug 'powerman/vim-plugin-AnsiEsc'
+endif
+
+if !s:already_have_personal_plugins
+	" Dependency plug-ins.
+	Plug 'dahu/Nexus'
+
+	" UI/misc. plug-ins.
+	Plug 'Raimondi/delimitMate'
+	Plug 'dahu/vim-fanfingtastic'
+	Plug 'mbbill/undotree'
+	Plug 'thinca/vim-visualstar'
+	Plug 'tpope/vim-commentary'
+	Plug 'tpope/vim-dispatch'
+	Plug 'tpope/vim-eunuch'
+	Plug 'tpope/vim-fugitive'
+	Plug 'tpope/vim-sleuth'
+	Plug 'tpope/vim-speeddating'
+	Plug 'tpope/vim-surround'
+endif
 
 " UI/misc. plug-ins.
-Plug 'Raimondi/delimitMate'
 Plug 'Raimondi/vim-transpose-words'
 Plug 'Shougo/denite.nvim'
-Plug 'bitc/vim-bad-whitespace'
-Plug 'ciaranm/securemodelines'
-Plug 'dahu/vim-fanfingtastic'
 Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/vim-easy-align'
-Plug 'mbbill/undotree'
-Plug 'mhinz/vim-hugefile'
-Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'rking/ag.vim'
-Plug 'thinca/vim-visualstar'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-characterize'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-speeddating'
-Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 
