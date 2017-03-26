@@ -144,11 +144,8 @@ if !s:already_have_personal_plugins
 endif
 
 " UI/misc. plug-ins.
-Plug 'Raimondi/vim-transpose-words'
 Plug 'Shougo/denite.nvim'
 Plug 'easymotion/vim-easymotion'
-Plug 'junegunn/vim-easy-align'
-Plug 'rking/ag.vim'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-characterize'
 Plug 'tpope/vim-endwise'
