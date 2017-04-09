@@ -13,6 +13,10 @@ dig  s/ 167   " U+00A7 § SECTION SIGN (also ^KSE)
 dig  xx 215   " U+00D7 × MULTIPLICATION SIGN (also ^K*X, ^K/\)
 "}}}
 
+"{{{ 0180–024F — Latin Extended-B
+dig  fn 402   " U+0192 ƒ LATIN SMALL LETTER F WITH HOOK
+"}}}
+
 "{{{ 2000–206F — General Punctuation
 dig  h- 8208  " U+2010 ‐ HYPHEN (also ^K-1)
 dig  .- 8209  " U+2011 ‑ NON-BREAKING HYPHEN
