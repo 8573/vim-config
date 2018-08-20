@@ -940,6 +940,8 @@ vnoremap <A->> >gv
 " above).
 inoremap <silent> <Esc>\ <C-O>:set invpaste<CR>
 
+vnoremap <C-R> r█
+
 "{{{ `:CountOccurrences`
 
 function! CountOccurrences(pattern)
