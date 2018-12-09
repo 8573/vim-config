@@ -4,6 +4,12 @@ source ~/.vim/syntax/irclog-dyn.vim
 
 function! s:apply()
 
+" Applying this syntax highlighting takes far too long on the Quassel
+" log files I look at in practice, which are rather large.
+if GetBufferTextLen() > pow(2, 13)
+	return
+endif
+
 for s:s in MatchesInBufferSansEmptiesAndDups('\v\<[@+ %~*&!]?\zs\k+\ze\>| \* \zs\k+\ze|\[\zs\k+\ze\]')
 	call HighlightIrcNick(s:s,
 		\ '"\v\<[@+ %~*&!]?', '>"', '"-\*- ', ' "', '"\[', '\]"')
