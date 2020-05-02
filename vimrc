@@ -142,9 +142,15 @@ if !s:already_have_personal_plugins
 	Plug 'tpope/vim-surround'
 endif
 
+" Dependency plug-ins
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+
 " UI/misc. plug-ins.
 Plug 'Shougo/denite.nvim'
 Plug 'easymotion/vim-easymotion'
+Plug 'garbas/vim-snipmate'
+Plug 'honza/vim-snippets'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-characterize'
 Plug 'tpope/vim-endwise'
