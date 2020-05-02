@@ -231,6 +231,7 @@ set showcmd
 set showfulltag
 set showtabline=2
 set smartcase
+set splitright
 set suffixes+=~,.aux,.bak,.bbl,.blg,.brf,.cb,.dvi,.idx,.ilg,.ind,.inx,.jpg,.o,.out,.png,.swp,.toc
 " I found that the quantity of times I regretted losing my undo history on
 " close was less than the quantity of times I wanted to use the start of that
