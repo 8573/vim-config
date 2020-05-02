@@ -155,6 +155,7 @@ Plug 'vim-airline/vim-airline'
 " File-type-specific plug-ins.
 Plug 'rust-lang/rust.vim', {'for': 'rust'}
 Plug 'racer-rust/vim-racer', {'for': 'rust'}
+Plug 'lervag/vimtex', {'for': ['tex', 'plaintex']}
 
 call plug#end()
 
@@ -1333,6 +1334,24 @@ let g:undotree_WindowLayout = 3
 let g:undotree_SplitWidth = 32
 
 "}}}
+"{{{ Vim-LaTeX
+
+"autocmd FileType tex call s:configure_Vim_LaTeX()
+"function s:configure_Vim_LaTeX()
+"	let b:Imap_FreezeImap = 1
+"endfunction
+
+"}}}
+"{{{ vimtex
+
+let g:vimtex_fold_enabled = 1
+
+autocmd FileType tex call s:configure_vimtex()
+function s:configure_vimtex()
+	" ...
+endfunction
+
+"}}}
 "}}}
 "{{{ Autocommands
 
@@ -1485,6 +1504,8 @@ endfunction
 call RegisterFileType('GIT_HUB_EDIT_MSG', 'gitcommit')
 
 call LocalSource('rc/filekinds.vim')
+
+let g:tex_no_error = 1
 
 "}}}
 "{{{ Epilog
