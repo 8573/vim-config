@@ -1303,6 +1303,30 @@ if executable('/run/current-system/sw/bin/nix-instantiate')
 endif
 
 "}}}
+"{{{ securemodelines
+
+" NOTE: Many strings that I might wish to use as 'foldmarker's (particularly
+" in syntaxes in which the default "{{{,}}}" are otherwise meaningful) are not
+" accepted by `securemodelines.vim`, for security reasons:
+" <https://github.com/ciaranm/securemodelines/issues/12>.
+
+let g:secure_modelines_verbose = 1
+
+autocmd BufReadPre,StdinReadPre * ++once call s:configure_securemodelines()
+function s:configure_securemodelines()
+	let g:secure_modelines_allowed_items += [
+		\ 'foldclose', 'fcl',
+		\ 'foldcolumn', 'fdc',
+		\ 'foldenable', 'fen', 'nofoldenable', 'nofen',
+		\ 'foldignore', 'fdi',
+		\ 'foldlevel', 'fdl',
+		\ 'foldmarker', 'fmr',
+		\ 'foldminlines', 'fml',
+		\ 'foldnestmax', 'fdn'
+		\ ]
+endfunction
+
+"}}}
 "{{{ undotree
 
 let g:undotree_WindowLayout = 3
