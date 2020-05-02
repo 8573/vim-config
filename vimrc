@@ -1019,8 +1019,8 @@ function! LeaderInsertCompleter(...)
 	return join(s:leaderInsertKeys, "\n")
 endfunction
 "}}}
-"{{{ s:DfnInsertMacro(key, expr)
-function! s:DfnInsertMacro(key, expr)
+"{{{ DfnInsertMacro(key, expr)
+function! DfnInsertMacro(key, expr)
 	let s:leaderInserts[a:key] = a:expr
 	call add(s:leaderInsertKeys, a:key)
 endfunction
@@ -1065,7 +1065,7 @@ function! s:DfnInsertTimestampKey(key, fmt)
 		"	\ '"=' . l:x . '<CR>P:Right<CR>'
 		"execute 'inoremap <silent> <Esc>it' . a:key
 		"	\ '<C-R><C-R>=' . l:x . '<CR>'
-		call s:DfnInsertMacro('t' . a:key, l:x)
+		call DfnInsertMacro('t' . a:key, l:x)
 	endfunction
 
 	call s:m('u' . a:key,
@@ -1111,7 +1111,7 @@ unlet s:key s:fmt
 "}}}
 "{{{ `<Leader>i.n` — Insert Repeatedly, N times
 
-call s:DfnInsertMacro('.n', 'GetInsertRepeatedlyNTimesString()')
+call DfnInsertMacro('.n', 'GetInsertRepeatedlyNTimesString()')
 
 function! GetInsertRepeatedlyNTimesString()
 	let l:s = PromptLine('String to repeatedly insert: ')
@@ -1122,7 +1122,7 @@ endfunction
 "}}}
 "{{{ `<Leader>i.c` — Insert Repeatedly, to Column
 
-call s:DfnInsertMacro('.c', 'GetInsertRepeatedlyToColumnString()')
+call DfnInsertMacro('.c', 'GetInsertRepeatedlyToColumnString()')
 
 function! GetInsertRepeatedlyToColumnString()
 	let l:s = PromptLine('String to repeatedly insert: ')
@@ -1143,7 +1143,7 @@ endfunction
 "{{{ `<Leader>i\<…>` — Insert Miscellaneous
 
 " Elision marker
-call s:DfnInsertMacro('\Em', string('[…]'))
+call DfnInsertMacro('\Em', string('[…]'))
 
 "}}}
 "{{{ `<Leader>u…` — Undo/redo
