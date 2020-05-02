@@ -1001,7 +1001,8 @@ function! s:LeaderInsert(imode)
 		if has_key(s:leaderInserts, l:s)
 			execute 'normal!' a:imode
 				\ . "\<C-R>=InputLocked("
-				\ string(s:leaderInserts[l:s]) ")\<CR>"
+				\ string(s:leaderInserts[l:s])
+				\ ")\<CR>\<Right>"
 			return
 		endif
 
