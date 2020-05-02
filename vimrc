@@ -988,13 +988,14 @@ function! s:LeaderInsert(imode)
 		if l:c == "\<C-C>"
 			return
 		elseif l:c == "\<NL>" || l:c == "\<CR>"
-			let l:s = PromptLine('', '',
-				\ 'custom,LeaderInsertCompleter')
-			break
+			let l:s = PromptLine('Complete leader-insert macro: ',
+				\ '', 'custom,LeaderInsertCompleter')
+		else
+			let l:s .= exists('mapleader')
+				\ && maparg(l:c) == mapleader
+				\ ? mapleader : l:c
 		endif
 
-		let l:s .= exists('mapleader') && maparg(l:c) == mapleader
-			\ ? mapleader : l:c
 
 		if has_key(s:leaderInserts, l:s)
 			execute 'normal!' a:imode
