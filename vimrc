@@ -128,40 +128,40 @@ endif
 if !s:already_have_personal_plugins
 	" Dependency plug-ins.
 	Plug 'dahu/Nexus'
+	" Dependency for vim-snipmate
+	Plug 'MarcWeber/vim-addon-mw-utils'
+	" Dependency for vim-snipmate
+	Plug 'tomtom/tlib_vim'
 
 	" UI/misc. plug-ins.
 	Plug 'Raimondi/delimitMate'
 	Plug 'dahu/vim-fanfingtastic'
+	Plug 'easymotion/vim-easymotion'
+	Plug 'garbas/vim-snipmate'
+	Plug 'honza/vim-snippets'
 	Plug 'mbbill/undotree'
 	Plug 'thinca/vim-visualstar'
+	Plug 'tpope/vim-abolish'
 	Plug 'tpope/vim-commentary'
 	Plug 'tpope/vim-dispatch'
+	Plug 'tpope/vim-endwise'
+	Plug 'tpope/vim-eunuch'
 	Plug 'tpope/vim-fugitive'
 	Plug 'tpope/vim-sleuth'
 	Plug 'tpope/vim-speeddating'
 	Plug 'tpope/vim-surround'
-endif
+	Plug 'tpope/vim-unimpaired'
 
-" Dependency plug-ins
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
+	" File-type-specific plug-ins
+	Plug 'rust-lang/rust.vim', {'for': 'rust'}
+	Plug 'racer-rust/vim-racer', {'for': 'rust'}
+	Plug 'lervag/vimtex', {'for': ['tex', 'plaintex']}
+endif
 
 " UI/misc. plug-ins.
 Plug 'Shougo/denite.nvim'
-Plug 'easymotion/vim-easymotion'
-Plug 'garbas/vim-snipmate'
-Plug 'honza/vim-snippets'
-Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-characterize'
-Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
-
-" File-type-specific plug-ins.
-Plug 'rust-lang/rust.vim', {'for': 'rust'}
-Plug 'racer-rust/vim-racer', {'for': 'rust'}
-Plug 'lervag/vimtex', {'for': ['tex', 'plaintex']}
 
 call plug#end()
 
