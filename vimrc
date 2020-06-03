@@ -137,6 +137,7 @@ if !s:already_have_personal_plugins
 	Plug 'Raimondi/delimitMate'
 	Plug 'dahu/vim-fanfingtastic'
 	Plug 'easymotion/vim-easymotion'
+	Plug 'editorconfig/editorconfig-vim'
 	Plug 'garbas/vim-snipmate'
 	Plug 'honza/vim-snippets'
 	Plug 'mbbill/undotree'
@@ -1269,6 +1270,18 @@ endif
 let g:EasyMotion_smartcase = 1
 
 map <CR> <Plug>(easymotion-s2)
+
+"}}}
+"{{{ EditorConfig
+
+if !exists('g:EditorConfig_exclude_patterns')
+	let g:EditorConfig_exclude_patterns = []
+endif
+
+let g:EditorConfig_exclude_patterns += [
+	\ 'fugitive://.*',
+	\ 'scp://.*'
+	\ ]
 
 "}}}
 "{{{ Netrw
