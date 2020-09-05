@@ -892,6 +892,16 @@ Assert GlobEsc('') ==# ''
 Assert GlobEsc('abc') ==# 'abc'
 Assert GlobEsc('a[?b*]c') ==# 'a[[][?]b[*]]c'
 "}}}
+"{{{ EchoHl(hl, args...)
+" Echo the `args` with highlighting `hl`. Unlike `:echohl`, this resets the
+" highlighting afterward. For echoing multiple highlighted lines, use
+" `:echohl`.
+function! EchoHl(hl, ...)
+	execute 'echohl' a:hl
+	echo join(a:000)
+	echohl None
+endfunction
+"}}}
 "}}}
 "{{{ Mappings and commands
 "{{{ Miscellaneous
@@ -1304,25 +1314,76 @@ autocmd BufEnter * call s:netrw_close()
 "}}}
 "{{{ Racer
 
-if executable('/run/current-system/sw/bin/racer')
-	" With Racer installed via Nix, this variable won't actually be used,
-	" but the vim-racer plugin will error out if it's left unset or is set
-	" to a path that's not that of a directory, so set this variable to a
-	" path known to be that of a directory.
-	let $RUST_SRC_PATH = '/run'
-endif
+function s:Racer_setup_global()
+	let g:Racer_is_found = s:Racer_setup_cmd()
+endfunction
+
+" Return whether Racer was found.
+function s:Racer_setup_cmd()
+	if exists('$c74d_NixOS_Rust_env_path')
+		let g:racer_cmd = $c74d_NixOS_Rust_env_path .. '/bin/racer'
+		return executable(g:racer_cmd)
+		" Even if Racer doesn't exist (executably) at this path, leave
+		" `g:racer_cmd` set thus: if I'm on NixOS, and there's no
+		" Racer there, then assume there's no Racer elsewhere either.
+	elseif executable('racer')
+		unlet! g:racer_cmd
+		return 1
+	endif
+
+	return 0
+endfunction
+
+" Used if Racer is present
+function s:Racer_setup_local_1()
+	nmap <buffer> <silent> <Leader>K <Plug>(rust-doc)
+
+	if exists('b:LanguageClient_set_up')
+			\ && has_key(g:LanguageClient_serverCommands, 'rust')
+		return
+	endif
+	" After this are substitutes for LanguageClient functionality.
+
+	nmap <buffer> <silent> gd <Plug>(rust-def-vertical)
+
+	" By analogy to tmux keybindings
+	nmap <buffer> <silent> g"d <Plug>(rust-def-split)
+
+	nmap <buffer> <silent> gD <Plug>(rust-def)
+endfunction
+
+" Used if Racer is missing
+function s:Racer_setup_local_0()
+	let l:Map = {key -> execute('nmap <buffer> <silent> ' .. key
+		\ .. " :call EchoHl('WarningMsg', 'Racer was not found.')<CR>"
+		\ )}
+
+	call l:Map('<Leader>K')
+
+	if exists('b:LanguageClient_set_up')
+			\ && has_key(g:LanguageClient_serverCommands, 'rust')
+		return
+	endif
+
+	call l:Map('gd')
+	call l:Map('g"d')
+	call l:Map('gD')
+endfunction
+
+call s:Racer_setup_global()
+autocmd FileType rust call s:Racer_setup_local_{g:Racer_is_found}()
 
 "}}}
 "{{{ Rust.vim
 
 let g:rust_fold = 1
 
-if executable('/run/current-system/sw/bin/nix-instantiate')
-	let g:rustc_path =
-		\ '$(nix-instantiate "<nixpkgs>" --attr rustc 2>/dev/null)'
-	let g:rustfmt_command =
-		\ '$(nix-instantiate "<nixpkgs>" --attr rustfmt 2>/dev/null)'
-endif
+"if executable('/run/current-system/sw/bin/nix-instantiate')
+"	let g:rustc_path =
+"		\ '$(nix-instantiate "<nixpkgs>" --attr rustc 2>/dev/null)'
+"	let g:rustfmt_command =
+"		\ '$(nix-instantiate "<nixpkgs>" --attr rustfmt 2>/dev/null)'
+"endif
 
 "}}}
 "{{{ securemodelines
