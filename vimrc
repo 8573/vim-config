@@ -1294,6 +1294,64 @@ let g:EditorConfig_exclude_patterns += [
 	\ ]
 
 "}}}
+"{{{ LanguageClient
+
+function s:LanguageClient_setup_global()
+	if !exists('g:LanguageClient_serverCommands')
+		let g:LanguageClient_serverCommands = {}
+	endif
+
+	if exists('$c74d_NixOS_Rust_env_path')
+		for l:subpath in ['/bin/rls', '/bin/rust-analyzer']
+			let l:path = $c74d_NixOS_Rust_env_path .. l:subpath
+			if executable(l:path)
+				let g:LanguageClient_serverCommands['rust'] =
+					\ [l:path]
+				break
+			endif
+		endfor
+	endif
+
+	" The Markdown doesn't get rendered, so I rather would read plain
+	" text.
+	let g:LanguageClient_preferredMarkupKind = ['plaintext', 'markdown']
+
+	let g:LanguageClient_selectionUI = "fzf"
+	let g:LanguageClient_fzfContextMenu = 1
+endfunction
+
+function s:LanguageClient_setup_local()
+	if !has_key(g:LanguageClient_serverCommands, &filetype)
+		return
+	endif
+
+	nnoremap <buffer> <silent> K
+		\ :call LanguageClient#textDocument_hover()<CR>
+
+	nnoremap <buffer> <silent> gd
+		\ :vsplit <Bar>
+		\  call LanguageClient#textDocument_definition()<CR>
+
+	" By analogy to tmux keybindings
+	nnoremap <buffer> <silent> g"d
+		\ :split <Bar>
+		\  call LanguageClient#textDocument_definition()<CR>
+
+	nnoremap <buffer> <silent> gD
+		\ :call LanguageClient#textDocument_definition()<CR>
+
+	nnoremap <buffer> <silent> <Leader>l
+		\ :call LanguageClient_contextMenu()<CR>
+
+	setlocal completefunc=LanguageClient#complete
+
+	let b:LanguageClient_set_up = 1
+endfunction
+
+call s:LanguageClient_setup_global()
+autocmd FileType * call s:LanguageClient_setup_local()
+
+"}}}
 "{{{ Netrw
 
 " I tire of the difficulties of closing Netrw buffers. Silently execute them
@@ -1543,6 +1601,12 @@ highlight NonText guibg=grey10
 
 highlight CursorLine cterm=none guibg=grey20
 highlight CursorLineNr cterm=bold
+
+" [2020-06-03] The default `guibg=Magenta` is okay for ye olde completion
+" menu, but now plugins are using popup windows for significant blobs of text,
+" such as documentation of a function under the cursor, which are painful to
+" read on magenta.
+highlight Pmenu guibg=grey25
 
 if &t_Co >= 8
 	highlight SignColumn ctermbg=0
